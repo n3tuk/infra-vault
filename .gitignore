@@ -1,0 +1,12 @@
+# Local .terraform directories, plus Terraform States and Variables
+**/.terraform
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Ignore Terraform CLI configuration files
+.terraformrc
+
+# Ignore taskfile processing directory and files
+.skip-pre-checks
+.task

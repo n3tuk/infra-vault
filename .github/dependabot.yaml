@@ -1,0 +1,70 @@
+---
+version: 2
+
+# For both Terraform modules and Terraform configurations, the checks performed
+# by Dependabot are distributed across the week to give time for the checks to
+# be made, reviewed, and merged, and then (if required) new releases made, which
+# in turn will allow the following updates to take these releases into account.
+#
+# Friday:
+#   - 12:00 GitHub Actions
+#   - 18:00 Sub-modules in Terraform modules (if present)
+# Saturday:
+#   - 18:00 Modules in Terraform modules
+# Sunday:
+#   - 18:00 Examples in Terraform modules (if present)
+#        or Terraform Configurations
+#
+#           Examples and configurations are delayed as some updates can be
+#           duplicate the updated made through the module in Terraform module
+#           update above, so this will reduce the chances of duplicated, and
+#           hence redundant, pull requests being made by Dependabot.
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: friday
+      time: '12:00'
+      timezone: 'Europe/London'
+    commit-message:
+      prefix: actions
+      include: scope
+    labels:
+      - type/dependencies
+      - update/github-workflows
+      - release/chore
+      - priority/normal
+
+  - package-ecosystem: terraform
+    directory: bootstrap/
+    schedule:
+      interval: weekly
+      day: sunday
+      time: '18:00'
+      timezone: 'Europe/London'
+    commit-message:
+      prefix: terraform
+      include: scope
+    labels:
+      - type/dependencies
+      - update/terraform
+      - release/chore
+      - priority/normal
+
+  - package-ecosystem: terraform
+    directory: infrastructure/
+    schedule:
+      interval: weekly
+      day: sunday
+      time: '18:00'
+      timezone: 'Europe/London'
+    commit-message:
+      prefix: terraform
+      include: scope
+    labels:
+      - type/dependencies
+      - update/terraform
+      - release/chore
+      - priority/normal
