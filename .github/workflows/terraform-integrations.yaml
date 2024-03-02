@@ -1,0 +1,34 @@
+---
+name: Terraform Integrations
+
+on:
+  # Configure this integration workflow up to be called by other workflows only
+  # (i.e. the terraform-trigger-label and terraform-trigger-pr workflows in this
+  # repository). No inputs are required, as all information about the event will
+  # be pulled in from the context of the event itself
+  workflow_call:
+
+permissions:
+  id-token: write
+  contents: write
+  issues: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  bootstrap:
+    name: Bootstrap
+    uses: n3tuk/workflows-reusable-terraform/.github/workflows/terraform-checks.yaml@v1.2
+    secrets: inherit
+    with:
+      working-directory: bootstrap
+      type: configuration
+      name: Bootstrap
+  infrastructure:
+    name: Infrastructure
+    uses: n3tuk/workflows-reusable-terraform/.github/workflows/terraform-checks.yaml@v1.2
+    secrets: inherit
+    with:
+      working-directory: infrastructure
+      type: configuration
+      name: Infrastructure
