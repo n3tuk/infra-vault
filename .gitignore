@@ -4,6 +4,12 @@
 *.tfstate.*
 *.tfplan
 
+# Local cache for Prettier
+.prettier.cache
+
+# Local Node Module caching
+node_modules
+
 # Ignore Terraform CLI configuration files
 .terraformrc
 

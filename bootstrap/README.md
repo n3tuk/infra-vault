@@ -40,6 +40,56 @@ $ task apply                                                                    
 ```
 
 <!-- BEGIN_TF_DOCS -->
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7.0 |
+| <a name="requirement_auth0"></a> [auth0](#requirement\_auth0) | ~> 1.1.2 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6.0 |
+| <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 3.25.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_auth0"></a> [auth0](#provider\_auth0) | 1.1.2 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 3.25.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [auth0_client.vault](https://registry.terraform.io/providers/auth0/auth0/latest/docs/resources/client) | resource |
+| [auth0_client_credentials.vault](https://registry.terraform.io/providers/auth0/auth0/latest/docs/resources/client_credentials) | resource |
+| [auth0_connection_client.vault](https://registry.terraform.io/providers/auth0/auth0/latest/docs/resources/connection_client) | resource |
+| [random_string.vault_client_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [vault_auth_backend.cert](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/auth_backend) | resource |
+| [vault_cert_auth_backend_role.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/cert_auth_backend_role) | resource |
+| [vault_cert_auth_backend_role.reader](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/cert_auth_backend_role) | resource |
+| [vault_jwt_auth_backend.oidc](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/jwt_auth_backend) | resource |
+| [vault_jwt_auth_backend_role.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.reader](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_policy.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/policy) | resource |
+| [auth0_connection.google_oauth2](https://registry.terraform.io/providers/auth0/auth0/latest/docs/data-sources/connection) | data source |
+| [vault_policy_document.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/policy_document) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_auth0_domain"></a> [auth0\_domain](#input\_auth0\_domain) | The Domain of the Auth0 account to connect OIDC authention with | `string` | `"n3tuk.uk.auth0.com"` | no |
+
+## Outputs
+
+No outputs.
+
 <!-- END_TF_DOCS -->
 
 ## License

@@ -1,0 +1,23 @@
+---
+formatter: markdown table
+version: '>= 0.16.0, < 1.0.0'
+
+sort:
+  enabled: true
+  by: required
+
+settings:
+  # For Terraform configurations, use the .terraform.lock.hcl file to define the
+  # documented versions of all providers, rather than the Terraform code itself
+  lockfile: true
+  read-comments: false
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+
+    {{ .Content }}
+
+    <!-- END_TF_DOCS -->

@@ -1,0 +1,147 @@
+---
+version: 3
+output: prefixed
+interval: 1000ms
+
+includes:
+  utils:
+    taskfile: ../.taskfiles/utils.yaml
+    internal: true
+  terraform:
+    taskfile: ../.taskfiles/terraform.yaml
+    internal: true
+
+tasks:
+  run:
+    desc: Run the all the integration tasks
+    summary: |-
+      Force the running of (by cleaning up first) all the integration tasks
+      for this Terraform Configuration, including initialisation, validation,
+      linting checks, testing, and security analysis.
+    cmds:
+      - task: clean
+      - task: lint
+      - task: security
+      - task: test
+      - task: docs
+
+  docs:
+    desc: Update the README.md file with terraform-docs
+    summary: |-
+      Update the README.md file with a summary of the Terraform configuration,
+      including information about the requirements, variables and outputs, as
+      well as the resources created, using terraform-docs.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:docs
+
+  validate:
+    desc: Validate the Terraform configuration
+    summary: |-
+      Check and validate the syntax of the Terraform configuration ensuring that
+      it is correct and valid.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:validate
+
+  plan:
+    desc: Plan the Terraform configuration
+    summary: |-
+      Run the Terraform configuration and analyse the difference between the
+      defined state verses the current state of the configured resources and
+      create a Terraform plan file.
+    deps:
+      - task: utils:pre-checks
+    vars:
+      VAULT_TOKEN:
+        sh: pass show n3tuk/vault/$(terraform workspace show)/root
+      AUTH0_CLIENT_ID:
+        sh: pass show n3tuk/auth0/n3tuk/configurator/client-id
+      AUTH0_CLIENT_SECRET:
+        sh: pass show n3tuk/auth0/n3tuk/configurator/client-secret
+    cmds:
+      - task: terraform:plan
+        # Environment variables are not passed through tasks, so instead ensure
+        # we explicitly pass through the credentials required as variables, and
+        # let the handler process them into the environment for the plan action
+        vars:
+          AUTH0_CLIENT_ID: '{{ .AUTH0_CLIENT_ID }}'
+          AUTH0_CLIENT_SECRET: '{{ .AUTH0_CLIENT_SECRET }}'
+          VAULT_TOKEN: '{{ .VAULT_TOKEN }}'
+
+  apply:
+    desc: Apply the changes for this Terraform configuration
+    summary: |-
+      Apply the changes recorded in the Terraform plan file against the
+      configured resources managed by this Terraform configuration.
+    deps:
+      # We need to collect the credentials under the plan task above before we
+      # can successfully plan the configuration, so set it explicitly here as
+      # the dependency in the helper will fail to plan
+      - task: plan
+    cmds:
+      - task: terraform:apply
+
+  destroy:
+    desc: Destroy the Terraform configuration
+    summary: |-
+      Initiate a plan and apply sequence to destroy all resources previously
+      created by this Terraform configuration.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:destroy
+
+  lint:
+    desc: Lint all Terraform and associated files for this configuration
+    summary: |-
+      Run code-level checks against the Terraform configuration to ensure the
+      files are correctly and consistently formatted and potential
+      mis-configurations are avoided.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:fmt
+      - task: terraform:lint
+
+  security:
+    desc: Run static analysis against the Terraform configuration
+    summary: |-
+      Run static code analysis tools against this Terraform configuration to
+      identify mis-configurations and security issues within the code.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:security
+
+  test:
+    desc: Run tests against the Terraform configuration
+    summary: |-
+      Run unit and integration tests against the Terraform configuration to
+      ensure that any code or deployable resources are valid and correct.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:test
+
+  workspace:*:
+    desc: Select the Terraform Workspace for deployment
+    summary: |-
+      Select the Terraform Workspace which will be used to manage the specific
+      version or environment of the configuration to be deployed.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:workspace:{{ index .MATCH 0 }}
+
+  clean:
+    desc: Clean temporary directories and files from this configuration
+    summary: |
+      Clean any temporary directories and files created by both this Taskfile,
+      and the tools and applications called from it within this configuration.
+    cmds:
+      - cmd: rm -f terraform.tfplan
+      - cmd: rm -rf .terraform
+      - cmd: rm -rf .task

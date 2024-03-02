@@ -1,0 +1,19 @@
+---
+cache:
+  backend: fs
+format: table
+ignorefile: .trivyignore
+list-all-pkgs: false
+misconfiguration:
+  include-non-failures: false
+  terraform:
+    exclude-downloaded-modules: true
+scan:
+  scanners:
+    - vuln
+    - misconfig
+    - license
+  skip-dirs: []
+  skip-files: []
+  slow: false
+timeout: 5m0s

@@ -1,0 +1,41 @@
+---
+version: 3
+
+vars:
+  root:
+    sh: git rev-parse --show-toplevel
+
+tasks:
+  # Run checks within the local environment to find out if the required tools
+  # exist, and if not exit from running any further with an explanation
+  pre-checks:
+    internal: true
+    silent: true
+    run: once
+    cmds:
+      - for:
+          - pre-commit
+          - terraform
+          - terraform-docs
+          - tflint
+          - trivy
+        cmd: |-
+          test -x "$(which {{ .ITEM }} 2>/dev/null)" \
+            || ( echo "Cannot find '{{ .ITEM }}'. Please install before trying again."
+                 exit 1 )
+    status:
+      # Set this file to bypass checks (only use if you know what you're doing)
+      - test -f {{ .root }}/.skip-pre-checks
+
+  pre-commit:
+    internal: true
+    silent: true
+    deps:
+      - task: pre-checks
+    dir: '{{ .root }}'
+    cmds:
+      - cmd: pre-commit install
+    generates:
+      - '{{ .root }}/.git/hooks/pre-commit'
+    status:
+      - test -f '{{ .root }}/.git/hooks/pre-commit'

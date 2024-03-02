@@ -1,0 +1,122 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v4.5.0
+    hooks:
+      - id: no-commit-to-branch
+        name: Check this commit is not to the main/master branch
+      - id: check-merge-conflict
+        name: Check for merge conflicts before committing
+      - id: check-case-conflict
+        name: Check for case conflicts for case-sensitive filesystems
+      - id: check-symlinks
+        name: Check for broken syslinks in the repository
+      - id: destroyed-symlinks
+        name: Check for destroyed symlinks in the repository
+      - id: check-added-large-files
+        name: Check no large files have been added to the commit
+      - id: trailing-whitespace
+        name: Check all trailing whitespace is removed
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+        name: Check all files end in a new-line only
+
+  - repo: https://github.com/zricethezav/gitleaks.git
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+        name: Check for hard-coded secrets, keys, and credentials
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks.git
+    rev: 3.0.0
+    hooks:
+      - id: script-must-have-extension
+        name: Check non-executable shell scripts end with .sh extension
+      - id: script-must-not-have-extension
+        name: Check executable shell scripts to not have extension
+      - id: shellcheck
+        name: Check shell scripts with shellcheck
+      - id: shfmt
+        name: Check shell scripts formtting with shfmt
+        args: ['-i', '2', '-bn', '-ci', '-sr']
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform.git
+    rev: v1.88.0
+    hooks:
+      - id: terraform_fmt
+        name: Check Terraform configuration formatting
+
+      - id: terraform_validate
+        name: Validate the bootstrap/ Terraform configuration
+        files: '^bootstrap/'
+        args:
+          - --tf-init-args=-upgrade
+          - --tf-init-args=-get
+          - --tf-init-args=-no-color
+          - --hook-config=--retry-once-with-cleanup=true
+      - id: terraform_tflint
+        name: Lint the bootstrap/ Terraform configuration
+        files: '^bootstrap/'
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+      - id: terraform_trivy
+        name: Analyse the bootstrap/ Terraform configuration
+        files: '^bootstrap/'
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
+
+      - id: terraform_validate
+        name: Validate the infrastructure/ Terraform configuration
+        files: '^infrastructure/'
+        args:
+          - --tf-init-args=-upgrade
+          - --tf-init-args=-get
+          - --tf-init-args=-no-color
+          - --hook-config=--retry-once-with-cleanup=true
+      - id: terraform_tflint
+        name: Lint the infrastructure/ Terraform configuration
+        files: '^infrastructure/'
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+      - id: terraform_trivy
+        name: Analyse the infrastructure/ Terraform configuration
+        files: '^infrastructure/'
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
+
+      - id: terraform_providers_lock
+        name: Check Terraform Provider plaforms configured
+        args:
+          - --args=-platform=linux_amd64
+          - --args=-platform=linux_arm64
+          - --args=-platform=darwin_amd64
+          - --args=-platform=darwin_arm64
+
+      - id: terraform_docs
+        name: Check the documentation for the Terraform configurations
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.terraform-docs.yaml
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Lint selected files with Prettier
+        types_or:
+          - markdown
+          - json
+          - yaml
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli.git
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        name: Check Markdown correctness and formatting
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema.git
+    rev: 0.28.0
+    hooks:
+      - name: Check Dependabot configuration for correctness
+        id: check-dependabot
+      - name: Check GitHub Workflows for correctness
+        id: check-github-workflows

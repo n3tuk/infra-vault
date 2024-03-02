@@ -1,0 +1,156 @@
+---
+version: 3
+output: prefixed
+interval: 1000ms
+
+includes:
+  utils:
+    taskfile: .taskfiles/utils.yaml
+    internal: true
+  bootstrap:
+    taskfile: bootstrap/Taskfile.yaml
+    dir: bootstrap
+  infrastructure:
+    taskfile: infrastructure/Taskfile.yaml
+    dir: infrastructure
+
+tasks:
+  run:
+    desc: Run the all the tasks
+    summary: |-
+      Force run (by first cleaning up) all the tasks for both the Terraform
+      Configuration, including initialisation, validation, formatting checks,
+      security analysis, and integration testing of the Module examples using
+      TerraTest.
+    deps:
+      - task: utils:pre-commit
+    cmds:
+      - task: clean
+      - task: validate
+      - task: lint
+      - task: security
+      - task: docs
+
+  docs:
+    desc: Update README.md files with terraform-docs
+    summary: |-
+      Update all README.md files in this Terraform configuration using
+      terraform-docs to ensure that all documentation is up-to-date with the
+      current configuration.
+    silent: true
+    deps:
+      - task: bootstrap:docs
+      - task: infrastructure:docs
+    cmds:
+      - cmd: echo -e '\033[0;32mCompleted\033[0m'
+
+  validate:
+    desc: Validate the Terraform configuration
+    summary: |-
+      Validate the Terraform configuration to ensure that the code is correct
+      and can be processed by Terraform.
+    silent: true
+    deps:
+      - task: bootstrap:validate
+      - task: infrastructure:validate
+    cmds:
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+
+  plan:
+    desc: Plan the Terraform configuration (infrastructure/ only)
+    deps:
+      - task: utils:pre-commit
+      - task: infrastructure:plan
+
+  apply:
+    desc: Apply the Terraform configuration (infrastructure/ only)
+    deps:
+      - task: utils:pre-commit
+      - task: infrastructure:apply
+
+  lint:
+    desc: Lint all Terraform amd associated files within this repository
+    summary: |-
+      Run linting checks across the Terraform configuration with tflint to find
+      any potential issues with the configurations before run-time deployment.
+    silent: true
+    deps:
+      - task: bootstrap:lint
+      - task: infrastructure:lint
+      - task: prettier
+    cmds:
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+
+  prettier:
+    prefix: 'repository:lint:prettier'
+    silent: true
+    sources:
+      - '.prettierrc'
+      - '.markdownlint.yaml'
+      - '.pre-commit-config.yaml'
+      - '.terraform-docs.yaml'
+      - '.trivy.yaml'
+      - '.github/*.md'
+      - '.github/*.yaml'
+      - '.github/workflows/*.yaml'
+      - '.taskfiles/*.yaml'
+      - 'Taskfile.yaml'
+      - '*.md'
+      - 'docs/*.md'
+    cmds:
+      - cmd: |-
+          node_modules/.bin/prettier \
+            --check --write \
+            --config .prettierrc \
+            --no-editorconfig \
+            --log-level warn \
+            --cache \
+            --cache-location .prettier.cache \
+            --cache-strategy content \
+            "**/*.{json,yaml,md}" \
+            ".github/**/*.{yaml,md}" \
+            ".taskfiles/*.yaml" \
+            .prettierrc \
+            .markdownlint.yaml \
+            .pre-commit-config.yaml \
+            .terraform-docs.yaml \
+            .trivy.yaml
+
+  security:
+    desc: Run static analysis against Terraform configurations
+    summary: |-
+      Run static analysis tools across the Terraform configurations to find any
+      bad configurations or potential security issues.
+    deps:
+      - task: bootstrap:security
+      - task: infrastructure:security
+
+  test:
+    desc: Run tests against Terraform configurations
+    summary: |-
+      Run unit and integration tests against all the Terraform configurations to
+      ensure that any code or deployable resources are valid and correct.
+    deps:
+      - task: bootstrap:test
+      - task: infrastructure:test
+
+  workspace:*:
+    desc: Select the Terraform Workspace for all configurations
+    summary: |-
+      Select the Terraform Workspace which will be used to manage the specific
+      environment of the configuration to be deployed in all configurations
+      within this repository.
+    cmds:
+      - task: bootstrap:workspace:{{ index .MATCH 0 }}
+      - task: infrastructure:workspace:{{ index .MATCH 0 }}
+
+  clean:
+    desc: Clean temporary files from the repository and configurations
+    summary: |-
+      Clean any temporary directories and files created by both this Taskfile,
+      and the tools and applications called from it, and from within the
+      configurations.
+    cmds:
+      - task: bootstrap:clean
+      - task: infrastructure:clean
+      - cmd: rm -rf .task

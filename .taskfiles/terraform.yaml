@@ -1,0 +1,237 @@
+---
+version: 3
+
+vars:
+  ROOT:
+    sh: git rev-parse --show-toplevel
+  BASE: '{{ base .TASKFILE_DIR }}'
+
+tasks:
+  fmt:
+    prefix: '{{ .BASE }}:fmt'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .TASKFILE_DIR }}/*.tf'
+    cmds:
+      - cmd: terraform fmt -no-color
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+
+  init:
+    prefix: '{{ .BASE }}:init'
+    internal: true
+    silent: true
+    sources:
+      # Monitor only the terraform.tf inside this configuration as this is where
+      # the providers are configured, so any re-initialisation will normally
+      # only be needed when this file changes
+      - '{{ .TASKFILE_DIR }}/terraform.tf'
+    cmds:
+      - cmd: |-
+          terraform init \
+            -no-color \
+            -upgrade -get
+      - cmd: |-
+          terraform providers lock \
+            -no-color \
+            -platform=linux_amd64 \
+            -platform=linux_arm64 \
+            -platform=darwin_amd64 \
+            -platform=darwin_arm64
+
+    status:
+      - test -d .terraform
+      - test -f .terraform/terraform.tfstate
+
+  workspace:*:
+    prefix: '{{ .BASE }}:workspace'
+    internal: true
+    silent: true
+    deps:
+      - task: init
+    vars:
+      workspace: 'vault.{{ index .MATCH 0 | trunc 1 }}.cym-south-1.kub3.uk'
+    cmds:
+      - cmd: |-
+          terraform workspace \
+            select -no-color "{{ .workspace }}" \
+          || \
+          terraform workspace \
+            new -no-color "{{ .workspace }}"
+      - cmd: echo -e '\033[0;32m{{ .workspace }} Active\033[0m'
+
+  validate:
+    prefix: '{{ .BASE }}:validate'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    deps:
+      - task: init
+    cmds:
+      - cmd: terraform validate -no-color
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+    generates:
+      - terraform.tfplan
+
+  plan:
+    prefix: '{{ .BASE }}:plan'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    deps:
+      - task: validate
+      - task: lint
+    env:
+      # Environment variables can only be set within the task itself, to look
+      # for, and convert, any required variable which can reference useful
+      # environment variables from the calling task into the environment of this
+      AUTH0_CLIENT_ID: '{{ .AUTH0_CLIENT_ID | default "" }}'
+      AUTH0_CLIENT_SECRET: '{{ .AUTH0_CLIENT_SECRET | default "" }}'
+      CLOUDFLARE_TOKEN: '{{ .CLOUDFLARE_TOKEN | default "" }}'
+      GITHUB_TOKEN: '{{ .GITHUB_TOKEN | default "" }}'
+      VAULT_TOKEN: '{{ .VAULT_TOKEN | default "" }}'
+    cmds:
+      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: terraform plan -no-color -out "{{ .TASKFILE_DIR }}/terraform.tfplan"
+    generates:
+      - '{{ .TASKFILE_DIR }}/terraform.tfplan'
+
+  apply:
+    prefix: '{{ .BASE }}:apply'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .TASKFILE_DIR }}/terraform.tfplan'
+    deps:
+      - task: plan
+    cmds:
+      # The terraform.tfplan file is rendered obsolete by even a partial apply
+      # of the configuration, so must always be deleted when an apply is run
+      - defer: rm -f terraform.tfplan
+      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: terraform apply -no-color terraform.tfplan
+
+  destroy:
+    prefix: '{{ .BASE }}:destroy'
+    internal: true
+    silent: true
+    prompt: |-
+      This task will destory any resources previously created through this
+      Terraform configuration. Are you sure you want to do this?
+    cmds:
+      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: terraform destroy -no-color -auto-approve
+
+  lint:
+    prefix: '{{ .BASE }}:lint'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.prettierrc'
+      - '{{ .ROOT }}/.tflint.hcl'
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/*.md'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    deps:
+      - task: prettier
+      - task: tflint
+    cmds:
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+
+  prettier:
+    prefix: '{{ .BASE }}:lint:prettier'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.prettierrc'
+      - '{{ .TASKFILE_DIR }}/*.md'
+      - '{{ .TASKFILE_DIR }}/*.yaml'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+    cmds:
+      - cmd: |-
+          "{{ .ROOT }}/node_modules/.bin/prettier" \
+            --check --write \
+            --config "{{ .ROOT }}/.prettierrc" \
+            --no-editorconfig \
+            --log-level warn \
+            --cache \
+            --cache-location "{{ .ROOT }}/.prettier.cache" \
+            --cache-strategy content \
+            "**/*.{json,yaml,md}"
+
+  tflint:
+    prefix: '{{ .BASE }}:lint:tflint'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.tflint.hcl'
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    cmds:
+      - cmd: |-
+          tflint \
+            --config "{{ .ROOT }}/.tflint.hcl" \
+            --init \
+          | { grep -v 'already installed' || true; }
+      - cmd: |-
+          tflint \
+            --config "{{ .ROOT }}/.tflint.hcl" \
+            --format compact
+
+  docs:
+    prefix: '{{ .BASE }}:docs'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.terraform-docs.yaml'
+      - '{{ .TASKFILE_DIR }}/*.tf'
+    cmds:
+      - cmd: terraform-docs --config "{{ .ROOT }}/.terraform-docs.yaml" .
+      - cmd: echo -e '\033[0;32mCompleted\033[0m'
+
+  test:
+    prefix: '{{ .BASE }}:test'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    deps:
+      - task: validate
+    cmds:
+      - cmd: terraform test -no-color
+
+  security:
+    prefix: '{{ .BASE }}:security'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.trivy.yaml'
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    deps:
+      - task: trivy
+    cmds:
+      - cmd: echo -e '\033[0;32mPassed\033[0m'
+
+  trivy:
+    prefix: '{{ .BASE }}:security:trivy'
+    internal: true
+    silent: true
+    sources:
+      - '{{ .ROOT }}/.trivy.yaml'
+      - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/templates/*'
+    cmds:
+      - cmd: trivy --quiet --config "{{ .ROOT }}/.trivy.yaml" filesystem .
