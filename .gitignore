@@ -9,6 +9,9 @@
 # Ignore cache files for Prettier linting and formatting checks
 .prettier.cache
 
+# Ignore backup files for drawio
+*.drawio.bkp
+
 # Ignore taskfile processing directory and files
 .skip-pre-checks
 .task

@@ -117,6 +117,22 @@ tasks:
       - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
       - cmd: terraform apply -no-color terraform.tfplan
 
+  output:
+    prefix: 'terraform:{{ .BASE }}:output'
+    internal: true
+    silent: true
+    cmds:
+      - cmd: terraform output -no-color
+
+  output:*:
+    prefix: 'terraform:{{ .BASE }}:output'
+    internal: true
+    silent: true
+    cmds:
+      - cmd: |-
+          echo -n -e "\033[0;32m{{ index .MATCH 0 }}\033[0m = "
+          terraform output -no-color {{ index .MATCH 0}}
+
   destroy:
     prefix: 'terraform:{{ .BASE }}:destroy'
     internal: true
