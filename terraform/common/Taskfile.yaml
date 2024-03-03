@@ -67,6 +67,26 @@ tasks:
     cmds:
       - task: terraform:apply
 
+  output:
+    desc: Show the outputs for this Terraform configuration
+    summary: |-
+      Show the outputs for this Terraform configuration and the selected
+      Workspace that has been deployed.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:output
+
+  output:*:
+    desc: Show the selected output for this Terraform configuration
+    summary: |-
+      Show the seledcted output for this Terraform configuration and the
+      selected Workspace that has been deployed.
+    deps:
+      - task: utils:pre-checks
+    cmds:
+      - task: terraform:output:{{ index .MATCH 0 }}
+
   destroy:
     desc: Destroy the Terraform configuration
     summary: |-
