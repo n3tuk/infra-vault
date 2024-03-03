@@ -78,8 +78,10 @@ No modules.
 | [vault_jwt_auth_backend_role.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.reader](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_policy.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/policy) | resource |
+| [vault_policy.reader](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/policy) | resource |
 | [auth0_connection.google_oauth2](https://registry.terraform.io/providers/auth0/auth0/latest/docs/data-sources/connection) | data source |
 | [vault_policy_document.administrator](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/policy_document) | data source |
+| [vault_policy_document.reader](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/policy_document) | data source |
 
 ## Inputs
 

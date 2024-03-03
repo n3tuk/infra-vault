@@ -7,7 +7,7 @@ resource "vault_jwt_auth_backend_role" "administrator" {
   groups_claim = "user_groups"
 
   role_name      = "administrator"
-  token_policies = ["administrator"]
+  token_policies = ["administrator", "default"]
 
   allowed_redirect_uris = [
     "https://${terraform.workspace}/ui/vault/auth/oidc/oidc/callback",
@@ -28,7 +28,7 @@ resource "vault_jwt_auth_backend_role" "reader" {
   user_claim   = "email"
   groups_claim = "user_groups"
 
-  token_policies = ["administrator"]
+  token_policies = ["reader", "default"]
 
   allowed_redirect_uris = [
     "https://${terraform.workspace}/ui/vault/auth/oidc/oidc/callback",
