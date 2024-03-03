@@ -141,6 +141,7 @@ tasks:
     summary: |
       Clean any temporary directories and files created by both this Taskfile,
       and the tools and applications called from it within this configuration.
+    run: once
     cmds:
       - cmd: rm -f terraform.tfplan
       - cmd: rm -rf .terraform
