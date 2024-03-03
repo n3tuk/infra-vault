@@ -17,7 +17,8 @@ repos:
         name: Check no large files have been added to the commit
       - id: trailing-whitespace
         name: Check all trailing whitespace is removed
-        args: [--markdown-linebreak-ext=md]
+        args:
+          - --markdown-linebreak-ext=md
       - id: end-of-file-fixer
         name: Check all files end in a new-line only
 
@@ -48,7 +49,7 @@ repos:
 
       - id: terraform_validate
         name: Validate the bootstrap Terraform configuration
-        files: '^terraform/bootstrap/'
+        files: ^terraform/bootstrap/
         args:
           - --tf-init-args=-upgrade
           - --tf-init-args=-get
@@ -56,18 +57,18 @@ repos:
           - --hook-config=--retry-once-with-cleanup=true
       - id: terraform_tflint
         name: Lint the bootstrap Terraform configuration
-        files: '^terraform/bootstrap/'
+        files: ^terraform/bootstrap/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
       - id: terraform_trivy
         name: Analyse the bootstrap Terraform configuration
-        files: '^terraform/bootstrap/'
+        files: ^terraform/bootstrap/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
 
       - id: terraform_validate
         name: Validate the common Terraform configuration
-        files: '^terraform/common/'
+        files: ^terraform/common/
         args:
           - --tf-init-args=-upgrade
           - --tf-init-args=-get
@@ -75,12 +76,12 @@ repos:
           - --hook-config=--retry-once-with-cleanup=true
       - id: terraform_tflint
         name: Lint the common Terraform configuration
-        files: '^terraform/common/'
+        files: ^terraform/common/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
       - id: terraform_trivy
         name: Analyse the common Terraform configuration
-        files: '^terraform/common/'
+        files: ^terraform/common/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
 
@@ -102,6 +103,8 @@ repos:
     hooks:
       - id: prettier
         name: Lint selected files with Prettier
+        args:
+          - --config=.prettier.yaml
         types_or:
           - markdown
           - json

@@ -85,36 +85,15 @@ tasks:
     prefix: 'repository:lint:prettier'
     silent: true
     sources:
-      - '.prettierrc'
-      - '.markdownlint.yaml'
-      - '.pre-commit-config.yaml'
-      - '.terraform-docs.yaml'
-      - '.trivy.yaml'
-      - '.github/*.md'
-      - '.github/*.yaml'
-      - '.github/workflows/*.yaml'
-      - '.taskfiles/*.yaml'
-      - 'Taskfile.yaml'
-      - '*.md'
-      - 'docs/*.md'
+      - '**/*.json'
+      - '**/*.yaml'
+      - '**/*.md'
     cmds:
       - cmd: |-
-          node_modules/.bin/prettier \
-            --check --write \
-            --config .prettierrc \
-            --no-editorconfig \
-            --log-level warn \
-            --cache \
-            --cache-location .prettier.cache \
-            --cache-strategy content \
-            "**/*.{json,yaml,md}" \
-            ".github/**/*.{yaml,md}" \
-            ".taskfiles/*.yaml" \
-            .prettierrc \
-            .markdownlint.yaml \
-            .pre-commit-config.yaml \
-            .terraform-docs.yaml \
-            .trivy.yaml
+          prettier --log-level warn \
+            --write --config .prettier.yaml \
+            --cache --cache-location .prettier.cache \
+            "**/*.{json,yaml,md}"
 
   security:
     desc: Run static analysis against Terraform configurations

@@ -156,14 +156,9 @@ tasks:
       - '{{ .TASKFILE_DIR }}/assets/*'
     cmds:
       - cmd: |-
-          "{{ .ROOT }}/node_modules/.bin/prettier" \
-            --check --write \
-            --config "{{ .ROOT }}/.prettierrc" \
-            --no-editorconfig \
-            --log-level warn \
-            --cache \
-            --cache-location "{{ .ROOT }}/.prettier.cache" \
-            --cache-strategy content \
+          prettier --log-level warn \
+            --write --config "{{ .ROOT }}/.prettier.yaml" \
+            --cache --cache-location .prettier.cache \
             "**/*.{json,yaml,md}"
 
   tflint:
@@ -195,14 +190,6 @@ tasks:
       - '{{ .TASKFILE_DIR }}/*.tf'
     cmds:
       - cmd: terraform-docs --config "{{ .ROOT }}/.terraform-docs.yaml" .
-      # Forcefully run prettier against the newly-generated README.md file as
-      # the table layout will be reset and needs to be re-formatted again
-      - cmd: |-
-          "{{ .ROOT }}/node_modules/.bin/prettier" \
-            --config "{{ .ROOT }}/.prettierrc" --no-editorconfig \
-            --log-level warn \
-            --write \
-            "README.md"
       - cmd: echo -e '\033[0;32mCompleted\033[0m'
 
   test:
