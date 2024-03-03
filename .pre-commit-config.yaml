@@ -17,7 +17,8 @@ repos:
         name: Check no large files have been added to the commit
       - id: trailing-whitespace
         name: Check all trailing whitespace is removed
-        args: [--markdown-linebreak-ext=md]
+        args:
+          - --markdown-linebreak-ext=md
       - id: end-of-file-fixer
         name: Check all files end in a new-line only
 
@@ -47,40 +48,40 @@ repos:
         name: Check Terraform configuration formatting
 
       - id: terraform_validate
-        name: Validate the bootstrap/ Terraform configuration
-        files: '^bootstrap/'
+        name: Validate the bootstrap Terraform configuration
+        files: ^terraform/bootstrap/
         args:
           - --tf-init-args=-upgrade
           - --tf-init-args=-get
           - --tf-init-args=-no-color
           - --hook-config=--retry-once-with-cleanup=true
       - id: terraform_tflint
-        name: Lint the bootstrap/ Terraform configuration
-        files: '^bootstrap/'
+        name: Lint the bootstrap Terraform configuration
+        files: ^terraform/bootstrap/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
       - id: terraform_trivy
-        name: Analyse the bootstrap/ Terraform configuration
-        files: '^bootstrap/'
+        name: Analyse the bootstrap Terraform configuration
+        files: ^terraform/bootstrap/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
 
       - id: terraform_validate
-        name: Validate the infrastructure/ Terraform configuration
-        files: '^infrastructure/'
+        name: Validate the common Terraform configuration
+        files: ^terraform/common/
         args:
           - --tf-init-args=-upgrade
           - --tf-init-args=-get
           - --tf-init-args=-no-color
           - --hook-config=--retry-once-with-cleanup=true
       - id: terraform_tflint
-        name: Lint the infrastructure/ Terraform configuration
-        files: '^infrastructure/'
+        name: Lint the common Terraform configuration
+        files: ^terraform/common/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
       - id: terraform_trivy
-        name: Analyse the infrastructure/ Terraform configuration
-        files: '^infrastructure/'
+        name: Analyse the common Terraform configuration
+        files: ^terraform/common/
         args:
           - --args=--config=__GIT_WORKING_DIR__/.trivy.yaml
 
@@ -95,13 +96,15 @@ repos:
       - id: terraform_docs
         name: Check the documentation for the Terraform configurations
         args:
-          - --args=--config=__GIT_WORKING_DIR__/.terraform-docs.yaml
+          - --args=--config=.terraform-docs.yaml
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
     hooks:
       - id: prettier
         name: Lint selected files with Prettier
+        args:
+          - --config=.prettier.yaml
         types_or:
           - markdown
           - json

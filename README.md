@@ -1,4 +1,4 @@
-# n3tuk Terraform Configurations for Hashicorp Vault
+# n3t.uk Terraform Configurations for Hashicorp Vault
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -58,7 +58,7 @@ requests within the network.
 
 ## Bootstrapping
 
-The [`bootstrap/`][bootstrap] directory which is used to host the initial
+The [`terraform/bootstrap/`][bootstrap] directory which is used to host the initial
 Terraform configuration which will configure the initial authentication and
 authorisation in the Vault Cluster.
 
@@ -67,13 +67,13 @@ initialisation of the data store. However, the configuration will create the
 initial authentication methods as well as the Roles and Policies needed so the
 Cluster can be subsequently be managed without the `root` Token.
 
-[bootstrap]: https://github.com/n3tuk/infra-vault/tree/main/bootstrap/
+[bootstrap]: https://github.com/n3tuk/infra-vault/tree/main/terraform/bootstrap/
 
 ```console
-$ cd bootstrap/
+$ cd terraform/bootstrap/
 $ task workspace:{environment}
-[bootstrap:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
-[bootstrap:workspace] vault.{e}.cym-south-1.kub3.uk Active
+[terraform:bootstrap:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
+[terraform:bootstrap:workspace] vault.{e}.cym-south-1.kub3.uk Active
 $ task plan
 $ task apply
 ```
@@ -90,7 +90,7 @@ Once the Vault Cluster has been bootstrapped, there are three ways to log into
 the system:
 
 1. Go to https://vault.{e}.cym-south-1.kub3.uk and select _OIDC_ from the
-   dropdown and enter either `administrator` or `reader` to the _Role_. The
+   drop-down and enter either `administrator` or `reader` to the _Role_. The
    button should show _Sign in with Auth0_. Click it and sign in.
 1. Open the console and log in with the `oidc` method and either the
    `administrator` or `reader` roles, and once the browser
@@ -104,15 +104,15 @@ the system:
     Waiting for OIDC authentication to complete...
    ```
 
-## Infrastructure
+## Common Configuration
 
-The [`infrastructure/`][infrastructure] workspace hosts the configuration for the
+The [`terraform/common/`][common] workspace hosts the configuration for the
 management and configuration of Hashicorp Vault resources. The
 [`README.md`][readme] therein for further information on supported `variables`
 and `outputs`, as well as the what is managed by the workspace.
 
-[infrastructure]: https://github.com/n3tuk/infra-vault/tree/main/infrastructure/
-[readme]: https://github.com/n3tuk/infra-vault/blob/main/infrastructure/README.md
+[common]: https://github.com/n3tuk/infra-vault/tree/main/terraform/common/
+[readme]: https://github.com/n3tuk/infra-vault/blob/main/terraform/common/README.md
 
 > [!TIP]
 > Ensure that you have authenticated against the Vault Cluster with your `vault`
@@ -120,10 +120,10 @@ and `outputs`, as well as the what is managed by the workspace.
 > not be able to connect to the Cluster to review, create, or delete resources.
 
 ```console
-$ cd infrastructure/
+$ cd terraform/common/
 $ task workspace:{environment}
-[infrastructure:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
-[infrastructure:workspace] vault.{e}.cym-south-1.kub3.uk Active
+[terraform:common:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
+[terraform:common:workspace] vault.{e}.cym-south-1.kub3.uk Active
 $ task plan
 $ task apply
 ```

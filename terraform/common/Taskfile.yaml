@@ -5,10 +5,10 @@ interval: 1000ms
 
 includes:
   utils:
-    taskfile: ../.taskfiles/utils.yaml
+    taskfile: ../../.taskfiles/utils.yaml
     internal: true
   terraform:
-    taskfile: ../.taskfiles/terraform.yaml
+    taskfile: ../../.taskfiles/terraform.yaml
     internal: true
 
 tasks:
@@ -54,22 +54,8 @@ tasks:
       create a Terraform plan file.
     deps:
       - task: utils:pre-checks
-    vars:
-      VAULT_TOKEN:
-        sh: pass show n3tuk/vault/$(terraform workspace show)/root
-      AUTH0_CLIENT_ID:
-        sh: pass show n3tuk/auth0/n3tuk/configurator/client-id
-      AUTH0_CLIENT_SECRET:
-        sh: pass show n3tuk/auth0/n3tuk/configurator/client-secret
     cmds:
       - task: terraform:plan
-        # Environment variables are not passed through tasks, so instead ensure
-        # we explicitly pass through the credentials required as variables, and
-        # let the handler process them into the environment for the plan action
-        vars:
-          AUTH0_CLIENT_ID: '{{ .AUTH0_CLIENT_ID }}'
-          AUTH0_CLIENT_SECRET: '{{ .AUTH0_CLIENT_SECRET }}'
-          VAULT_TOKEN: '{{ .VAULT_TOKEN }}'
 
   apply:
     desc: Apply the changes for this Terraform configuration
@@ -77,10 +63,7 @@ tasks:
       Apply the changes recorded in the Terraform plan file against the
       configured resources managed by this Terraform configuration.
     deps:
-      # We need to collect the credentials under the plan task above before we
-      # can successfully plan the configuration, so set it explicitly here as
-      # the dependency in the helper will fail to plan
-      - task: plan
+      - task: utils:pre-checks
     cmds:
       - task: terraform:apply
 
@@ -141,6 +124,7 @@ tasks:
     summary: |
       Clean any temporary directories and files created by both this Taskfile,
       and the tools and applications called from it within this configuration.
+    run: once
     cmds:
       - cmd: rm -f terraform.tfplan
       - cmd: rm -rf .terraform

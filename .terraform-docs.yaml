@@ -16,8 +16,10 @@ output:
   file: README.md
   mode: inject
   template: |-
-    <!-- BEGIN_TF_DOCS -->
+    <!-- terraform-docs-start -->
+    <!-- prettier-ignore-start -->
 
     {{ .Content }}
 
-    <!-- END_TF_DOCS -->
+    <!-- prettier-ignore-end -->
+    <!-- terraform-docs-end -->

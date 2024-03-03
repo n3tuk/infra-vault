@@ -8,11 +8,11 @@ includes:
     taskfile: .taskfiles/utils.yaml
     internal: true
   bootstrap:
-    taskfile: bootstrap/Taskfile.yaml
-    dir: bootstrap
-  infrastructure:
-    taskfile: infrastructure/Taskfile.yaml
-    dir: infrastructure
+    taskfile: terraform/bootstrap/Taskfile.yaml
+    dir: terraform/bootstrap
+  common:
+    taskfile: terraform/common/Taskfile.yaml
+    dir: terraform/common
 
 tasks:
   run:
@@ -40,7 +40,7 @@ tasks:
     silent: true
     deps:
       - task: bootstrap:docs
-      - task: infrastructure:docs
+      - task: common:docs
     cmds:
       - cmd: echo -e '\033[0;32mCompleted\033[0m'
 
@@ -52,21 +52,21 @@ tasks:
     silent: true
     deps:
       - task: bootstrap:validate
-      - task: infrastructure:validate
+      - task: common:validate
     cmds:
       - cmd: echo -e '\033[0;32mPassed\033[0m'
 
   plan:
-    desc: Plan the Terraform configuration (infrastructure/ only)
+    desc: Plan the Terraform configuration (common/ only)
     deps:
       - task: utils:pre-commit
-      - task: infrastructure:plan
+      - task: common:plan
 
   apply:
-    desc: Apply the Terraform configuration (infrastructure/ only)
+    desc: Apply the Terraform configuration (common/ only)
     deps:
       - task: utils:pre-commit
-      - task: infrastructure:apply
+      - task: common:apply
 
   lint:
     desc: Lint all Terraform amd associated files within this repository
@@ -76,7 +76,7 @@ tasks:
     silent: true
     deps:
       - task: bootstrap:lint
-      - task: infrastructure:lint
+      - task: common:lint
       - task: prettier
     cmds:
       - cmd: echo -e '\033[0;32mPassed\033[0m'
@@ -85,36 +85,15 @@ tasks:
     prefix: 'repository:lint:prettier'
     silent: true
     sources:
-      - '.prettierrc'
-      - '.markdownlint.yaml'
-      - '.pre-commit-config.yaml'
-      - '.terraform-docs.yaml'
-      - '.trivy.yaml'
-      - '.github/*.md'
-      - '.github/*.yaml'
-      - '.github/workflows/*.yaml'
-      - '.taskfiles/*.yaml'
-      - 'Taskfile.yaml'
-      - '*.md'
-      - 'docs/*.md'
+      - '**/*.json'
+      - '**/*.yaml'
+      - '**/*.md'
     cmds:
       - cmd: |-
-          node_modules/.bin/prettier \
-            --check --write \
-            --config .prettierrc \
-            --no-editorconfig \
-            --log-level warn \
-            --cache \
-            --cache-location .prettier.cache \
-            --cache-strategy content \
-            "**/*.{json,yaml,md}" \
-            ".github/**/*.{yaml,md}" \
-            ".taskfiles/*.yaml" \
-            .prettierrc \
-            .markdownlint.yaml \
-            .pre-commit-config.yaml \
-            .terraform-docs.yaml \
-            .trivy.yaml
+          prettier --log-level warn \
+            --write --config .prettier.yaml \
+            --cache --cache-location .prettier.cache \
+            "**/*.{json,yaml,md}"
 
   security:
     desc: Run static analysis against Terraform configurations
@@ -123,7 +102,7 @@ tasks:
       bad configurations or potential security issues.
     deps:
       - task: bootstrap:security
-      - task: infrastructure:security
+      - task: common:security
 
   test:
     desc: Run tests against Terraform configurations
@@ -132,7 +111,7 @@ tasks:
       ensure that any code or deployable resources are valid and correct.
     deps:
       - task: bootstrap:test
-      - task: infrastructure:test
+      - task: common:test
 
   workspace:*:
     desc: Select the Terraform Workspace for all configurations
@@ -142,7 +121,7 @@ tasks:
       within this repository.
     cmds:
       - task: bootstrap:workspace:{{ index .MATCH 0 }}
-      - task: infrastructure:workspace:{{ index .MATCH 0 }}
+      - task: common:workspace:{{ index .MATCH 0 }}
 
   clean:
     desc: Clean temporary files from the repository and configurations
@@ -150,7 +129,8 @@ tasks:
       Clean any temporary directories and files created by both this Taskfile,
       and the tools and applications called from it, and from within the
       configurations.
+    run: once
     cmds:
       - task: bootstrap:clean
-      - task: infrastructure:clean
+      - task: common:clean
       - cmd: rm -rf .task

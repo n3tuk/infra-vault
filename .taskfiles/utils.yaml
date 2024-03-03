@@ -19,6 +19,7 @@ tasks:
           - terraform-docs
           - tflint
           - trivy
+          - prettier
         cmd: |-
           test -x "$(which {{ .ITEM }} 2>/dev/null)" \
             || ( echo "Cannot find '{{ .ITEM }}'. Please install before trying again."

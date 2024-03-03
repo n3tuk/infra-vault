@@ -8,7 +8,7 @@ vars:
 
 tasks:
   fmt:
-    prefix: '{{ .BASE }}:fmt'
+    prefix: 'terraform:{{ .BASE }}:fmt'
     internal: true
     silent: true
     sources:
@@ -18,7 +18,7 @@ tasks:
       - cmd: echo -e '\033[0;32mPassed\033[0m'
 
   init:
-    prefix: '{{ .BASE }}:init'
+    prefix: 'terraform:{{ .BASE }}:init'
     internal: true
     silent: true
     sources:
@@ -44,7 +44,7 @@ tasks:
       - test -f .terraform/terraform.tfstate
 
   workspace:*:
-    prefix: '{{ .BASE }}:workspace'
+    prefix: 'terraform:{{ .BASE }}:workspace'
     internal: true
     silent: true
     deps:
@@ -61,7 +61,7 @@ tasks:
       - cmd: echo -e '\033[0;32m{{ .workspace }} Active\033[0m'
 
   validate:
-    prefix: '{{ .BASE }}:validate'
+    prefix: 'terraform:{{ .BASE }}:validate'
     internal: true
     silent: true
     sources:
@@ -77,7 +77,7 @@ tasks:
       - terraform.tfplan
 
   plan:
-    prefix: '{{ .BASE }}:plan'
+    prefix: 'terraform:{{ .BASE }}:plan'
     internal: true
     silent: true
     sources:
@@ -97,13 +97,13 @@ tasks:
       GITHUB_TOKEN: '{{ .GITHUB_TOKEN | default "" }}'
       VAULT_TOKEN: '{{ .VAULT_TOKEN | default "" }}'
     cmds:
-      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
       - cmd: terraform plan -no-color -out "{{ .TASKFILE_DIR }}/terraform.tfplan"
     generates:
       - '{{ .TASKFILE_DIR }}/terraform.tfplan'
 
   apply:
-    prefix: '{{ .BASE }}:apply'
+    prefix: 'terraform:{{ .BASE }}:apply'
     internal: true
     silent: true
     sources:
@@ -114,22 +114,22 @@ tasks:
       # The terraform.tfplan file is rendered obsolete by even a partial apply
       # of the configuration, so must always be deleted when an apply is run
       - defer: rm -f terraform.tfplan
-      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
       - cmd: terraform apply -no-color terraform.tfplan
 
   destroy:
-    prefix: '{{ .BASE }}:destroy'
+    prefix: 'terraform:{{ .BASE }}:destroy'
     internal: true
     silent: true
     prompt: |-
       This task will destory any resources previously created through this
       Terraform configuration. Are you sure you want to do this?
     cmds:
-      - cmd: echo -e '\033[0;31m$(terraform workspace show) Active\033[0m'
+      - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
       - cmd: terraform destroy -no-color -auto-approve
 
   lint:
-    prefix: '{{ .BASE }}:lint'
+    prefix: 'terraform:{{ .BASE }}:lint'
     internal: true
     silent: true
     sources:
@@ -146,7 +146,7 @@ tasks:
       - cmd: echo -e '\033[0;32mPassed\033[0m'
 
   prettier:
-    prefix: '{{ .BASE }}:lint:prettier'
+    prefix: 'terraform:{{ .BASE }}:lint:prettier'
     internal: true
     silent: true
     sources:
@@ -156,18 +156,13 @@ tasks:
       - '{{ .TASKFILE_DIR }}/assets/*'
     cmds:
       - cmd: |-
-          "{{ .ROOT }}/node_modules/.bin/prettier" \
-            --check --write \
-            --config "{{ .ROOT }}/.prettierrc" \
-            --no-editorconfig \
-            --log-level warn \
-            --cache \
-            --cache-location "{{ .ROOT }}/.prettier.cache" \
-            --cache-strategy content \
+          prettier --log-level warn \
+            --write --config "{{ .ROOT }}/.prettier.yaml" \
+            --cache --cache-location .prettier.cache \
             "**/*.{json,yaml,md}"
 
   tflint:
-    prefix: '{{ .BASE }}:lint:tflint'
+    prefix: 'terraform:{{ .BASE }}:lint:tflint'
     internal: true
     silent: true
     sources:
@@ -187,7 +182,7 @@ tasks:
             --format compact
 
   docs:
-    prefix: '{{ .BASE }}:docs'
+    prefix: 'terraform:{{ .BASE }}:docs'
     internal: true
     silent: true
     sources:
@@ -198,7 +193,7 @@ tasks:
       - cmd: echo -e '\033[0;32mCompleted\033[0m'
 
   test:
-    prefix: '{{ .BASE }}:test'
+    prefix: 'terraform:{{ .BASE }}:test'
     internal: true
     silent: true
     sources:
@@ -211,7 +206,7 @@ tasks:
       - cmd: terraform test -no-color
 
   security:
-    prefix: '{{ .BASE }}:security'
+    prefix: 'terraform:{{ .BASE }}:security'
     internal: true
     silent: true
     sources:
@@ -225,7 +220,7 @@ tasks:
       - cmd: echo -e '\033[0;32mPassed\033[0m'
 
   trivy:
-    prefix: '{{ .BASE }}:security:trivy'
+    prefix: 'terraform:{{ .BASE }}:security:trivy'
     internal: true
     silent: true
     sources:

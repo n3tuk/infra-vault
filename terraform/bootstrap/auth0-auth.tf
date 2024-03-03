@@ -15,8 +15,8 @@ resource "auth0_client" "vault" {
   web_origins     = ["https://${terraform.workspace}"]
 
   callbacks = [
-    "https://${terraform.workspace}/ui/vault/auth/auth0/oidc/callback",
-    "https://${terraform.workspace}:8200/ui/vault/auth/auth0/oidc/callback",
+    "https://${terraform.workspace}/ui/vault/auth/oidc/oidc/callback",
+    "https://${terraform.workspace}:8200/ui/vault/auth/oidc/oidc/callback",
     "http://localhost:8250/oidc/callback",
   ]
 

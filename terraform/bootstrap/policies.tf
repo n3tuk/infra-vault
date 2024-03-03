@@ -5,6 +5,18 @@ resource "vault_policy" "administrator" {
 
 data "vault_policy_document" "administrator" {
   rule {
+    path         = "*"
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+  }
+}
+
+resource "vault_policy" "reader" {
+  name   = "reader"
+  policy = data.vault_policy_document.reader.hcl
+}
+
+data "vault_policy_document" "reader" {
+  rule {
     path         = "sys/health"
     capabilities = ["read", "sudo"]
   }

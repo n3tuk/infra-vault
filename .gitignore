@@ -1,17 +1,13 @@
-# Local .terraform directories, plus Terraform States and Variables
+# Ignore any .terraform directories for caching providers, modules, and remote
+# states, plus any local Terraform states, plans, and configuration files
+.terraformrc
 **/.terraform
 *.tfstate
 *.tfstate.*
 *.tfplan
 
-# Local cache for Prettier
+# Ignore cache files for Prettier linting and formatting checks
 .prettier.cache
-
-# Local Node Module caching
-node_modules
-
-# Ignore Terraform CLI configuration files
-.terraformrc
 
 # Ignore taskfile processing directory and files
 .skip-pre-checks
