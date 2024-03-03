@@ -1,4 +1,4 @@
-# n3t.uk Vault Cluster Configuration
+# n3t.uk Vault Cluster Common Configuration
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -24,9 +24,10 @@ of the resources inside the Vault Cluster:
 
 ### Vault Authentication
 
-As the
-
-[bootstrap]: https://github.com/n3tuk/infra-vault/tree/main/bootstrap/
+As the Terraform configuration for the general infrastructure deployment
+requires that you be authenticated, ensure that you have used the `vault` CLI
+application to initiate a `login` request, using either `cert` or `oidc`
+methods. The Role should normally be `administrator`.
 
 ```console
 $ vault login -method=cert role={name}
@@ -40,6 +41,10 @@ Waiting for OIDC authentication to complete...
 ```
 
 ### Deployment
+
+To initiate a deployment, using `task` to both select the Terraform Workspace to
+deploy to (normally one of `services`, `development`, or `production`) and then
+`plan` and `apply` the configuration.
 
 ```console
 $ task init
@@ -56,14 +61,15 @@ $ task apply
 [infrastructure:apply] Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
 
-<!-- BEGIN_TF_DOCS -->
+<!-- terraform-docs-start -->
+<!-- prettier-ignore-start -->
 
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7.0 |
-| <a name="requirement_auth0"></a> [auth0](#requirement\_auth0) | ~> 1.1.2 |
+| <a name="requirement_auth0"></a> [auth0](#requirement\_auth0) | ~> 1.2.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6.0 |
 | <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 3.25.0 |
 
@@ -87,28 +93,8 @@ No inputs.
 
 No outputs.
 
-<!-- END_TF_DOCS -->
-
-## License
-
-Copyright (c) 2024 Jonathan Wright
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+<!-- prettier-ignore-end -->
+<!-- terraform-docs-end -->
 
 ## Authors
 

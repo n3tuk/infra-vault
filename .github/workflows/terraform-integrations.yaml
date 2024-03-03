@@ -21,14 +21,14 @@ jobs:
     uses: n3tuk/workflows-reusable-terraform/.github/workflows/terraform-checks.yaml@v1.2
     secrets: inherit
     with:
-      working-directory: bootstrap
+      working-directory: terraform/bootstrap
       type: configuration
       name: Bootstrap
-  infrastructure:
-    name: Infrastructure
+  common:
+    name: Common
     uses: n3tuk/workflows-reusable-terraform/.github/workflows/terraform-checks.yaml@v1.2
     secrets: inherit
     with:
-      working-directory: infrastructure
+      working-directory: terraform/common
       type: configuration
-      name: Infrastructure
+      name: Common

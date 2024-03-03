@@ -1,4 +1,4 @@
-# Contributing to n3tuk Repositories
+# Contributing to n3t.uk Repositories
 
 [`n3tuk`][n3tuk] is a personal GitHub Organisation which contains a collection
 of configurations and services for personal development, alongside the operation

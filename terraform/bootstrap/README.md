@@ -26,27 +26,28 @@ of the resources inside the Vault Cluster:
 
 ```console
 $ task init
-[bootstrap:init] Terraform has been successfully initialized!
+[terraform:bootstrap:init] Terraform has been successfully initialized!
 $ task workspace:{environment}
-[bootstrap:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
-[bootstrap:workspace] vault.{e}.cym-south-1.kub3.uk Active
+[terraform:bootstrap:workspace] Switched to workspace "vault.{e}.cym-south-1.kub3.uk".
+[terraform:bootstrap:workspace] vault.{e}.cym-south-1.kub3.uk Active
 $ task validate
-[bootstrap:validate] Success! The configuration is valid.
-[bootstrap:validate] Passed
+[terraform:bootstrap:validate] Success! The configuration is valid.
+[terraform:bootstrap:validate] Passed
 $ task plan
-[bootstrap:plan] No changes. Your infrastructure matches the configuration.
+[terraform:bootstrap:plan] No changes. Your infrastructure matches the configuration.
 $ task apply                                                                                 5s
-[bootstrap:apply] Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+[terraform:bootstrap:apply] Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 ```
 
-<!-- BEGIN_TF_DOCS -->
+<!-- terraform-docs-start -->
+<!-- prettier-ignore-start -->
 
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7.0 |
-| <a name="requirement_auth0"></a> [auth0](#requirement\_auth0) | ~> 1.1.2 |
+| <a name="requirement_auth0"></a> [auth0](#requirement\_auth0) | ~> 1.2.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6.0 |
 | <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 3.25.0 |
 
@@ -54,7 +55,7 @@ $ task apply                                                                    
 
 | Name | Version |
 |------|---------|
-| <a name="provider_auth0"></a> [auth0](#provider\_auth0) | 1.1.2 |
+| <a name="provider_auth0"></a> [auth0](#provider\_auth0) | 1.2.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
 | <a name="provider_vault"></a> [vault](#provider\_vault) | 3.25.0 |
 
@@ -90,28 +91,8 @@ No modules.
 
 No outputs.
 
-<!-- END_TF_DOCS -->
-
-## License
-
-Copyright (c) 2024 Jonathan Wright
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+<!-- prettier-ignore-end -->
+<!-- terraform-docs-end -->
 
 ## Authors
 

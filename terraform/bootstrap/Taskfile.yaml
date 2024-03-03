@@ -5,10 +5,10 @@ interval: 1000ms
 
 includes:
   utils:
-    taskfile: ../.taskfiles/utils.yaml
+    taskfile: ../../.taskfiles/utils.yaml
     internal: true
   terraform:
-    taskfile: ../.taskfiles/terraform.yaml
+    taskfile: ../../.taskfiles/terraform.yaml
     internal: true
 
 tasks:
