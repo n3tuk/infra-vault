@@ -13,8 +13,15 @@ tasks:
     silent: true
     sources:
       - '{{ .TASKFILE_DIR }}/*.tf'
+      - '{{ .TASKFILE_DIR }}/variables/*.tfvars'
     cmds:
-      - cmd: terraform fmt -no-color
+      - cmd: |-
+          terraform fmt -no-color
+      - cmd: |-
+          if test -d variables
+          then
+            terraform fmt -no-color variables
+          fi
       - cmd: echo -e '\033[0;32mPassed\033[0m'
 
   init:
@@ -58,6 +65,12 @@ tasks:
           || \
           terraform workspace \
             new -no-color "{{ .workspace }}"
+      - cmd: |-
+          if [[ ! -f variables/{{ .workspace }}.tfvars ]]
+          then
+            mkdir -p variables
+            touch variables/{{ .workspace }}.tfvars
+          fi
       - cmd: echo -e '\033[0;32m{{ .workspace }} Active\033[0m'
 
   validate:
@@ -96,9 +109,16 @@ tasks:
       CLOUDFLARE_TOKEN: '{{ .CLOUDFLARE_TOKEN | default "" }}'
       GITHUB_TOKEN: '{{ .GITHUB_TOKEN | default "" }}'
       VAULT_TOKEN: '{{ .VAULT_TOKEN | default "" }}'
+    vars:
+      workspace:
+        sh: terraform workspace show
     cmds:
       - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
-      - cmd: terraform plan -no-color -out "{{ .TASKFILE_DIR }}/terraform.tfplan"
+      - cmd: |-
+          terraform plan \
+            -no-color \
+            -var-file variables/{{ .workspace }}.tfvars \
+            -out "{{ .TASKFILE_DIR }}/terraform.tfplan"
     generates:
       - '{{ .TASKFILE_DIR }}/terraform.tfplan'
 
@@ -154,6 +174,7 @@ tasks:
       - '{{ .TASKFILE_DIR }}/*.tf'
       - '{{ .TASKFILE_DIR }}/*.md'
       - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/variables/*'
       - '{{ .TASKFILE_DIR }}/templates/*'
     deps:
       - task: prettier
@@ -185,6 +206,7 @@ tasks:
       - '{{ .ROOT }}/.tflint.hcl'
       - '{{ .TASKFILE_DIR }}/*.tf'
       - '{{ .TASKFILE_DIR }}/assets/*'
+      - '{{ .TASKFILE_DIR }}/variables/*'
       - '{{ .TASKFILE_DIR }}/templates/*'
     cmds:
       - cmd: |-
@@ -193,9 +215,12 @@ tasks:
             --init \
           | { grep -v 'already installed' || true; }
       - cmd: |-
-          tflint \
-            --config "{{ .ROOT }}/.tflint.hcl" \
-            --format compact
+          if test -d variables
+          then
+            tflint \
+              --config "{{ .ROOT }}/.tflint.hcl" \
+              --format compact --chdir variables
+          fi
 
   docs:
     prefix: 'terraform:{{ .BASE }}:docs'
