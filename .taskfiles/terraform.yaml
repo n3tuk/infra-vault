@@ -93,10 +93,6 @@ tasks:
     prefix: 'terraform:{{ .BASE }}:plan'
     internal: true
     silent: true
-    sources:
-      - '{{ .TASKFILE_DIR }}/*.tf'
-      - '{{ .TASKFILE_DIR }}/assets/*'
-      - '{{ .TASKFILE_DIR }}/templates/*'
     deps:
       - task: validate
       - task: lint
