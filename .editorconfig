@@ -12,3 +12,6 @@ tab_width = 2
 
 [*.py]
 indent_size = 4
+
+[*.yaml]
+quote_type = single
