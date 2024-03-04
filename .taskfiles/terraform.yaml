@@ -109,7 +109,8 @@ tasks:
       workspace:
         sh: terraform workspace show
     cmds:
-      - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
+      - cmd: |-
+          echo -e 'workspace: \033[0;31m{{ .workspace }}\033[0m [tfvars=variable/{{ .workspace }}.tfvars]'
       - cmd: |-
           terraform plan \
             -no-color \
@@ -126,11 +127,15 @@ tasks:
       - '{{ .TASKFILE_DIR }}/terraform.tfplan'
     deps:
       - task: plan
+    vars:
+      workspace:
+        sh: terraform workspace show
     cmds:
       # The terraform.tfplan file is rendered obsolete by even a partial apply
       # of the configuration, so must always be deleted when an apply is run
       - defer: rm -f terraform.tfplan
-      - cmd: echo -e "\033[0;31m$(terraform workspace show) Active\033[0m"
+      - cmd: |-
+          echo -e "workspace: \033[0;31m{{ .workspace }}\033[0m [tfvars=variable/{{ .workspace }}.tfvars]"
       - cmd: terraform apply -no-color terraform.tfplan
 
   output:
