@@ -18,14 +18,19 @@ tasks:
       - "{{ .ROOT_DIR }}/.markdownignore"
       # Ignore the Terraform cache
       - exclude: terraform/.terraform/**
+      # Ignore all Kiro files
+      - exclude: .kiro/**
     vars:
       files:
         sh: |-
           find . \
-            -type f \
-            -not -path './terraform/.terraform/*' \
-            -and -iname '*.md' \
-            -print \
+               -type f \
+               -not \
+            \(     -path './.kiro/*' \
+               -or -path './terraform/.terraform/*' \
+            \) -and \
+               -iname '*.md' \
+               -print \
             2>/dev/null \
             | sed 's|^\./||' \
             | paste -sd' ' - \
