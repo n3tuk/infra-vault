@@ -1,0 +1,36 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: 3
+
+tasks:
+  terraform:lint:init:
+    internal: true
+    desc: Initialize tflint for the Terraform configuration
+    summary: >-
+      Initialize tflint for the Terraform configuration to ensure that all required plugins and dependencies are
+      installed and up-to-date.
+    sources:
+      - "{{ .ROOT_DIR }}/.tflint.hcl"
+    silent: true
+    run: when_changed
+    cmds:
+      - cmd: tflint --config '{{ .ROOT_DIR }}/.tflint.hcl' --init
+      - cmd: echo -e '{{ .TASK_COLOR_GREEN }}Completed\e[0m'
+
+  terraform:lint:
+    desc: Lint the Terraform configuration with tflint
+    summary: >-
+      Lint the Terraform configuration with tflint to find any potential issues within the code, such as syntax errors,
+      or potential misconfigurations.
+    sources:
+      - "{{ .ROOT_DIR }}/.tflint.hcl"
+      - "*.tf"
+    deps:
+      - task: terraform:lint:init
+      - task: terraform:fmt
+    silent: true
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: tflint --config '{{ .ROOT_DIR }}/.tflint.hcl'
+      - cmd: echo -e '\e[0;32mPassed\e[0m'

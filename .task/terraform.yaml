@@ -1,0 +1,297 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: 3
+
+tasks:
+  terraform:fmt:
+    aliases:
+      - t:f
+      - t:fmt
+    desc: Format all Terraform files for this configuration
+    summary: >-
+      Run the `terraform fmt` action against all Terraform files in this Terraform configuration to ensure they are all
+      correctly formatted. This provides a quick check on the code to ensure it is valid, and changes in whitespace are
+      minimised.
+    sources:
+      - "*.tf"
+      - "*.tfvars"
+    silent: true
+    deps:
+      - task: terraform:switch
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform fmt -no-color"
+      - cmd: echo -e '\e[0;32mPassed\e[0m'
+
+  terraform:init:
+    internal: true
+    desc: (Re)Initialise Terraform for the configuration
+    summary: >-
+      (Re)Initialise the Terraform for the configuration, which will fetch any required Terraform modules and providers.
+    sources:
+      # Monitor only the terraform.tf file as these is where provider versions will be configured, so any
+      # re-initialisation will only be needed when these change, rather than just any Terraform file
+      - terraform.tf
+    silent: true
+    run: when_changed
+    deps:
+      - task: terraform:switch
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      # Ensure the .terraform directory exists as tee will fail if it cannot create the init.log file
+      - cmd: mkdir -p .terraform
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform init -upgrade -no-color -input=false |& tee '.terraform/init.log'"
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+    status:
+      - test -f .terraform.lock.hcl
+      - test -d .terraform
+
+  terraform:lock:
+    aliases:
+      - t:l
+      - lockfile
+    desc: Update the Terraform lockfile with all required platforms
+    summary: >-
+      Update the Terraform lock file (i.e. `.terraform.lock.hcl`) with all the hashes for all the required platforms for
+      any provider which has been updated. This ensures that multi-platform development and deployment is possible. The
+      current platforms are: `linux_amd64`, `linux_arm64`, `darwin_arm64`
+    sources:
+      - .terraform.lock.hcl
+    silent: true
+    run: when_changed
+    deps:
+      - task: terraform:init
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: >-
+          {{ .ROOT_DIR }}/.bin/terraform providers lock -no-color -enable-plugin-cache -platform=linux_amd64
+          -platform=linux_arm64 -platform=darwin_arm64
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+
+  terraform:get:
+    aliases:
+      - t:g
+      - t:get
+    desc: Fetch all required Terraform Modules for this configuration
+    summary: Fetch all required Terraform Modules for this configuration.
+    sources:
+      - "*.tf"
+      - "*.tfvars"
+      # Ignore any changes to terraform.tf when checking for module updates, as modules will not normally be defined in
+      # this file, and any changes to this file will re-initilise the configuration anyway, which will fetch the latest
+      # modules automatically.
+      - exclude: "**/terraform.tf"
+    silent: true
+    deps:
+      - task: terraform:init
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform get -update -no-color"
+      - cmd: echo -e '\e[0;32mPassed\e[0m'
+
+  terraform:validate:
+    aliases:
+      - t:v
+      - t:validate
+    desc: Validate all Terraform files for this configuration
+    summary: Validate the syntax of the Terraform configuration to ensure that the code is correct and valid.
+    sources:
+      - "*.tf"
+      - "*.tfvars"
+    silent: true
+    deps:
+      - task: terraform:init
+      - task: terraform:get
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform validate -no-color"
+      - cmd: echo -e '\e[0;32mPassed\e[0m'
+
+  terraform:plan:
+    aliases:
+      - t:p
+      - t:plan
+      - plan
+    desc: Plan the changes for this Terraform configuration
+    summary: >-
+      Build and display the execution plan for the current state of this Terraform configuration, then save it as the
+      `terraform.tfplan` file.
+    sources:
+      - "*.tf"
+      - "*.tfvars"
+    silent: true
+    deps:
+      - task: terraform:validate
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: >-
+          {{ .ROOT_DIR }}/.bin/terraform plan -no-color -input=false -out terraform.tfplan |& tee '.terraform/plan.log'
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+    generates:
+      - terraform.tfplan
+    status:
+      - test -f terraform.tfplan
+
+  terraform:plan:encrypt:
+    aliases:
+      - t:encrypt
+      - encrypt
+    desc: Encrypt the Terraform execution plan with a symmetric key
+    summary: >-
+      Encrypt, with GPG, the `terraform.tfplan` file to ensure that it is not readable at rest when managed as an asset
+      external to the worker or system that created it.
+    sources:
+      - terraform.tfplan
+    silent: true
+    deps:
+      - task: terraform:plan
+      - task: utils:pre-check:exec:gpg
+      - task: utils:pre-check:exec:shred
+    vars:
+      pass:
+        # Store the password as a file for GPG to use, but do so in-memory, not on the local disk
+        sh: mktemp /dev/shm/tfplan-gpg-pass-phrase.XXXXXXXX
+    preconditions:
+      - sh: test -n "${TFPLAN_GPG_PASSPHRASE:-}"
+        msg: >-
+          The `TFPLAN_GPG_PASSPHRASE` environment variable is not set, so the `terraform.tfplan.gpg` file cannot be
+          encrypted.
+      - sh: test ! -f terraform.tfplan.gpg
+        msg: The `terraform.tfplan` file has already been encrypted, so cannot be re-encrypted.
+      - sh: test -f terraform.tfplan
+        msg: The `terraform.tfplan` file does not exist, so cannot be encrypted.
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - defer: "{{if not .EXIT_CODE}}shred --force --remove --zero terraform.tfplan{{end}}"
+      - defer: shred --force --remove --zero "{{ .pass }}"
+      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > "{{ .pass }}"
+      - cmd: >-
+          gpg --batch --yes --passphrase-file "{{ .pass }}" --output terraform.tfplan.gpg --symmetric terraform.tfplan
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+    generates:
+      - terraform.tfplan.gpg
+    status:
+      - test -f terraform.tfplan.gpg
+
+  terraform:plan:decrypt:
+    aliases:
+      - t:decrypt
+      - decrypt
+    desc: Decrypt the Terraform execution plan using a symmetric key
+    summary: >-
+      Decrypt, with GPG, the `terraform.tfplan` file to ensure that it is made availble for use by Terraform having been
+      fetched as an asset while being encrypted at rest.
+    sources:
+      - terraform.tfplan.gpg
+    silent: true
+    deps:
+      - task: utils:pre-check:exec:gpg
+      - task: utils:pre-check:exec:shred
+    vars:
+      file:
+        # Store the password as a file for GPG to use, but do so in-memory, not on the local disk
+        sh: mktemp /dev/shm/tfplan-gpg-pass-phrase-XXXXXXXX
+    preconditions:
+      - sh: test -n "${TFPLAN_GPG_PASSPHRASE:-}"
+        msg: >-
+          The `TFPLAN_GPG_PASSPHRASE` environment variable is not set, so the `terraform.tfplan.gpg` file cannot be
+          decrypted.
+      - sh: test ! -f terraform.tfplan
+        msg: The `terraform.tfplan` file has already been decrypted, so cannot be re-decrypted.
+      - sh: test -f terraform.tfplan.gpg
+        msg: The `terraform.tfplan.gpg` file does not exist, so cannot be decrypted.
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - defer: "{{if not .EXIT_CODE}}shred --force --remove --zero terraform.tfplan.gpg{{end}}"
+      - defer: shred --force --remove --zero "{{ .file }}"
+      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > "{{ .file }}"
+      - cmd: gpg --batch --yes --passphrase-file "{{ .file }}" --output terraform.tfplan --decrypt terraform.tfplan.gpg
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+    generates:
+      - terraform.tfplan
+    status:
+      - test -f terraform.tfplan
+
+  terraform:apply:
+    aliases:
+      - t:a
+      - t:apply
+      - apply
+    desc: Apply the execution plan for this Terraform configuration
+    summary: >-
+      Run the execution plan built for the current state of this Terraform configuration, ensuring any required changes
+      are applied to the infrastructure.
+    silent: true
+    sources:
+      - terraform.tfplan
+    deps:
+      - task: terraform:plan
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      # The terraform.tfplan file is rendered obsolete by even a partial apply of the configuration, so it must always
+      # be deleted when an apply is run, otherwise the next run will fail with an error.
+      - defer: rm -f terraform.tfplan
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform apply -no-color terraform.tfplan |& tee '.terraform/apply.log'"
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+
+  terraform:output:
+    desc: Show the outputs for this Terraform configuration
+    summary: >-
+      Show the outputs for this Terraform configuration, as known in the current version of the Terraform state file.
+    silent: true
+    deps:
+      - task: terraform:init
+    env:
+      TF_IN_AUTOMATION: "true"
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform output -no-color"
+
+  terraform:documentation:
+    aliases:
+      - t:d
+      - t:docs
+      - terraform:docs
+    desc: Update Terraform `README.md` file with `terraform-docs`
+    summary: >-
+      Update the `README.md` file for the Terraform configuration with a summary of the configuration, including
+      information about the requirements, variables and outputs, along with the resources created, using
+      `terraform-docs`.
+    sources:
+      - "{{ .ROOT_DIR }}/.terraform-docs.yaml"
+      - "*.tf"
+    silent: true
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: terraform-docs . --config '{{ .ROOT_DIR }}/.terraform-docs.yaml'
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
+
+  terraform:clean:
+    aliases:
+      - t:c
+      - t:clean
+    desc: Clean temporary directories and files from this configuration
+    summary: >-
+      Clean any temporary directories and files created by both this Taskfile, and the tools and applications called
+      from it.
+    run: once
+    silent: true
+    cmds:
+      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - cmd: rm -f terraform.tfplan
+      - cmd: rm -f terraform.tfstate{,.backup}
+      - cmd: rm -rf .terraform
+      - cmd: echo -e '\e[0;32mCompleted\e[0m'
