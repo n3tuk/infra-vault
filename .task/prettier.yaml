@@ -31,13 +31,17 @@ tasks:
       - "{{ .ROOT_DIR }}/.gitignore"
       # Ignore the Terraform cache
       - exclude: terraform/.terraform/**
+      # Ignore all Kiro files
+      - exclude: .kiro/**
     vars:
       files:
         sh: |-
           find . \
                -type f \
-               -not -path './terraform/.terraform/*' \
-               -and \
+               -not
+            \(     -path './.kiro/*' \
+               -or -path './terraform/.terraform/*' \
+            \) -and \
             \(     -iname '*.md' \
                -or -iname '*.yml' \
                -or -iname '*.yaml' \
