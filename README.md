@@ -5,7 +5,9 @@ n3t.uk infrastructure. Specifically OpenBao will be providing the secrets manage
 into both the [Authentik][authentik] OIDC service at [auth.n3t.uk][n3tuk-auth], and the [GitHub Actions
 OIDC][github-actions-oidc] for the purposes of authenticating both users and machine-to-machine access.
 
-> [!TIP] This documentation provides a high-level overview of this Terraform configuration and the service. For more
+> [!TIP]
+>
+> This documentation provides a high-level overview of this Terraform configuration and the service. For more
 > information and resources, please visit the [pages.n3t.uk/infra-openbao][gh-pages] Pages site.
 
 [terraform]: https://www.terraform.io/
