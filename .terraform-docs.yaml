@@ -1,0 +1,23 @@
+---
+formatter: markdown table
+version: ">= 0.22.0, < 1.0.0"
+
+sort:
+  enabled: true
+  by: required
+
+settings:
+  lockfile: true
+  read-comments: false
+
+output:
+  file: README.md
+  mode: inject
+  template: |-
+    <!-- terraform-docs-start -->
+    <!-- prettier-ignore-start -->
+
+    {{ .Content }}
+
+    <!-- prettier-ignore-end -->
+    <!-- terraform-docs-end -->

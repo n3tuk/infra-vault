@@ -1,0 +1,15 @@
+# Ignore the temporary bin/ directory
+.bin
+
+# Ignore Terraform state, plan, and temporary files and directories
+.terraform
+*.tfstate
+*.tfstate.backup
+*.tfplan
+
+# Ignore cache files for Prettier linting and formatting checks
+.prettiercache
+
+# Ignore Taskfile processing directory and files
+.skip-pre-checks
+.task/checksum

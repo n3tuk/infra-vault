@@ -1,0 +1,10 @@
+---
+self-hosted-runner:
+  labels:
+    - aws-eks-ci-amd64-2vcpu-8gb
+
+config-variables:
+  - TF_APP_ID
+  - TF_APP_INSTALLATION_ID
+
+paths: {}

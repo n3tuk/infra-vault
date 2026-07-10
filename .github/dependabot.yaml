@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/dependabot-2.0.json
+version: 2
+
+updates:
+  - package-ecosystem: pre-commit
+    ignore:
+      - dependency-name: https://github.com/pre-commit/mirrors-prettier.git
+        # This repository is deprecated and archived, and ideally the latest version we should be using is the one
+        # configured, so ignore all updates to the next major release to prevent bad update from being raised.
+        update-types:
+          - version-update:semver-major
+    directory: /
+    schedule:
+      interval: daily
+      # yamllint disable-line rule:quoted-strings
+      time: "07:00"
+      timezone: Europe/London
+    # Grouped updates shouldn't be needed as this configuration will only ever run against a single file
+    cooldown:
+      # Wait for three days before applying any update to allow time for any issues to be raised with the update, and
+      # for any fixes to be applied, before applying the update to this repository.
+      default-days: 3
+    commit-message:
+      prefix: chore(pre-commit)
+    labels:
+      - type/dependencies
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+      # yamllint disable-line rule:quoted-strings
+      time: "08:00"
+      timezone: Europe/London
+    groups:
+      github-actions:
+        applies-to: version-updates
+        group-by: dependency-name
+    cooldown:
+      default-days: 3
+      exclude:
+        # Set a cooldown override for internal GitHub Actions and allow those to be updated immediately upon release
+        - n3tuk/*
+    commit-message:
+      prefix: chore(actions)
+    labels:
+      - type/dependencies
+
+  - package-ecosystem: terraform
+    directory: terraform/
+    schedule:
+      interval: daily
+      # yamllint disable-line rule:quoted-strings
+      time: "08:30"
+      timezone: Europe/London
+    groups:
+      terraform-updates:
+        applies-to: version-updates
+        group-by: dependency-name
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: chore(terraform)
+    labels:
+      - type/dependencies
