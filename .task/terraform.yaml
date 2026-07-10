@@ -160,8 +160,8 @@ tasks:
       - task: utils:pre-check:exec:shred
     vars:
       pass:
-        # Store the password as a file for GPG to use, but do so in-memory, not on the local disk
-        sh: mktemp /dev/shm/tfplan-gpg-pass-phrase.XXXXXXXX
+        # Store the password as a file for GPG to use as a temporary file which will be shredded after use
+        sh: mktemp "${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/tfplan-gpg-pass-phrase.XXXXXXXX"
     preconditions:
       - sh: test -n "${TFPLAN_GPG_PASSPHRASE:-}"
         msg: >-
@@ -200,8 +200,8 @@ tasks:
       - task: utils:pre-check:exec:shred
     vars:
       file:
-        # Store the password as a file for GPG to use, but do so in-memory, not on the local disk
-        sh: mktemp /dev/shm/tfplan-gpg-pass-phrase-XXXXXXXX
+        # Store the password as a file for GPG to use as a temporary file which will be shredded after use
+        sh: mktemp "${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/tfplan-gpg-pass-phrase.XXXXXXXX"
     preconditions:
       - sh: test -n "${TFPLAN_GPG_PASSPHRASE:-}"
         msg: >-
