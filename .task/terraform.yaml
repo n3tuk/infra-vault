@@ -190,8 +190,8 @@ tasks:
       - decrypt
     desc: Decrypt the Terraform execution plan using a symmetric key
     summary: >-
-      Decrypt, with GPG, the `terraform.tfplan` file to ensure that it is made availble for use by Terraform having been
-      fetched as an asset while being encrypted at rest.
+      Decrypt, with GPG, the `terraform.tfplan` file to ensure that it is made available for use by Terraform having
+      been fetched as an asset while being encrypted at rest.
     sources:
       - terraform.tfplan.gpg
     silent: true
@@ -292,6 +292,6 @@ tasks:
     cmds:
       - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - cmd: rm -f terraform.tfplan
-      - cmd: rm -f terraform.tfstate{,.backup}
+      - cmd: rm -f terraform.tfstate terraform.tfstate.backup
       - cmd: rm -rf .terraform
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
