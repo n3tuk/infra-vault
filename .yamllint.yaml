@@ -3,8 +3,8 @@
 extends: default
 
 ignore:
-  # Ignore anything related to Kiro as this are machine-generated files and should not be validated by yamllint.
-  - .kiro/*
+  # Ignore anything related to Kiro as these are machine-generated files and should not be validated by yamllint.
+  - .kiro/**
 
 rules:
   document-start:
