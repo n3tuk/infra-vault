@@ -1,2 +1,2 @@
-# Ignore anything related to Kiro as this are machine-generated files and should not be formatted by Prettier.
-.kiro/*
+# Ignore anything related to Kiro as these are machine-generated files and should not be formatted by Prettier.
+.kiro/
