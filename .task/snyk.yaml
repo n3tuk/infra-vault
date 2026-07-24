@@ -6,7 +6,7 @@ version: 3
 tasks:
   snyk:
     desc: Run Snyk checks for Terraform misconfigurations
-    summary: >-
+    summary: |-
       Run Snyk for the Terraform configuration to identify any potential misconfigurations and security issues within
       the code.
     sources:
@@ -14,6 +14,6 @@ tasks:
       - terraform/*.tfvars
     silent: true
     cmds:
-      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: echo "Snyk is not yet configured; skipping."
       - cmd: echo -e '\e[0;33mSkipped\e[0m'
