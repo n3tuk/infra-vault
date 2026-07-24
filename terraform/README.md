@@ -30,7 +30,11 @@ for the purposes of authenticating both users and machine-to-machine access.
 
 ## Providers
 
-No providers.
+| Name | Version |
+| ---- | ------- |
+| <a name="provider_authentik"></a> [authentik](#provider\_authentik) | 2026.5.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 6.13.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 5.10.1 |
 
 ## Modules
 
@@ -38,15 +42,67 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+| ---- | ---- |
+| [authentik_application.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/application) | resource |
+| [authentik_group.admin](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_group.secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_group.secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_policy_binding.admin](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_policy_binding.secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_policy_binding.secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_property_mapping_provider_scope.openbao_groups](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/property_mapping_provider_scope) | resource |
+| [authentik_provider_oauth2.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/provider_oauth2) | resource |
+| [github_actions_organization_oidc_subject_claim_customization_template.organization](https://registry.terraform.io/providers/integrations/github/6.13.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
+| [vault_identity_group.admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group.secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group.secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group_alias.authentik_admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_identity_group_alias.authentik_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_identity_group_alias.authentik_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_jwt_auth_backend.authentik](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend) | resource |
+| [vault_jwt_auth_backend.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend) | resource |
+| [vault_jwt_auth_backend_role.authentik_admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.authentik_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.authentik_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_kv_secret_backend_v2.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
+| [vault_kv_secret_backend_v2.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
+| [vault_kv_secret_backend_v2.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
+| [vault_mount.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
+| [vault_mount.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
+| [vault_mount.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
+| [vault_policy.admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.secrets_read](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.secrets_write](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [authentik_certificate_key_pair.default_self_signed](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/certificate_key_pair) | data source |
+| [authentik_flow.default_authentication_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
+| [authentik_flow.default_authorization_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
+| [authentik_flow.default_invalidation_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
+| [authentik_property_mapping_provider_scope.email](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/property_mapping_provider_scope) | data source |
+| [authentik_property_mapping_provider_scope.openid](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/property_mapping_provider_scope) | data source |
+| [authentik_property_mapping_provider_scope.profile](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/property_mapping_provider_scope) | data source |
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_authentik_url"></a> [authentik\_url](#input\_authentik\_url) | The base URL of the Authentik instance used to provide OIDC authentication for OpenBao users (e.g. `https://auth.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
+| <a name="input_openbao_url"></a> [openbao\_url](#input\_openbao\_url) | The base URL of the OpenBao instance used to provide the secrets management endpoint (e.g. `https://secrets.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+| ---- | ----------- |
+| <a name="output_authentik_application_slug"></a> [authentik\_application\_slug](#output\_authentik\_application\_slug) | The slug of the Authentik application created for OpenBao, used to construct the OIDC discovery URL. |
+| <a name="output_authentik_auth_accessor"></a> [authentik\_auth\_accessor](#output\_authentik\_auth\_accessor) | The accessor for the Authentik OIDC authentication backend used to authenticate users. |
+| <a name="output_authentik_auth_path"></a> [authentik\_auth\_path](#output\_authentik\_auth\_path) | The mount path of the Authentik OIDC authentication backend used to authenticate users. |
+| <a name="output_github_actions_auth_accessor"></a> [github\_actions\_auth\_accessor](#output\_github\_actions\_auth\_accessor) | The accessor for the GitHub Actions OIDC authentication backend used to authenticate GitHub Actions runners. |
+| <a name="output_github_actions_auth_path"></a> [github\_actions\_auth\_path](#output\_github\_actions\_auth\_path) | The mount path of the GitHub Actions OIDC authentication backend used to authenticate GitHub Actions runners. |
+| <a name="output_secrets_mount_path"></a> [secrets\_mount\_path](#output\_secrets\_mount\_path) | The mount paths of the KV v2 secrets engines used to store infrastructure secrets. |
 
 <!-- prettier-ignore-end -->
 <!-- terraform-docs-end -->
