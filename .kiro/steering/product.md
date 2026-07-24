@@ -51,7 +51,7 @@ There are three methods of authentication to be supported:
 
 This service will operate one secrets engines:
 
-- A KV v2 secrets engine at `secrets` to manage infrastructure secrets for the n3t.uk infrastructure, including GitHub
+- One or more KV v2 secrets engines to manage infrastructure secrets for the n3t.uk infrastructure, including GitHub
   Workflows and Kubernetes secrets via the External Secrets Operator (ESO).
 
 ### Policies
@@ -88,7 +88,7 @@ repository, event_name, ref, job_workflow_ref
 
 ## Environments
 
-OpenBao is a centralised common service, therefore all deployemnts will be to a single environment, and single cluster:
+OpenBao is a centralised common service, therefore all deployments will be to a single environment, and single cluster:
 production. There will be no separate development or staging environments, and all changes will be made to the
 production environment. This is to ensure that the service is always available and that any changes are made in a
 controlled and auditable manner.
