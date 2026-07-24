@@ -6,7 +6,7 @@ version: 3
 tasks:
   zizmor:workflows:
     desc: Analyse the GitHub Workflows with zizmor
-    summary: >-
+    summary: |-
       Run zizmor against the GitHub Workflows to identify any potential issues with artifact integrity, excessive
       permissions, injection weaknesses, secrets exposure weaknesses, trigger misuse, and unpinned dependencies.
     sources:
@@ -14,6 +14,7 @@ tasks:
       - .github/zizmor.yaml
     silent: true
     cmds:
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: ls .github/workflows/*.yaml >/dev/null 2>&1
         cmd: zizmor --persona auditor --no-progress --format plain .github/workflows/*.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
@@ -22,7 +23,7 @@ tasks:
     aliases:
       - dependabot
     desc: Analyse the GitHub Dependabot configuration with zizmor
-    summary: >-
+    summary: |-
       Run the static analysis tool `zizmor` against the GitHub Dependabot configuration to identify any potential
       misconfiguration issues or security weaknesses within the workflows.
     sources:
@@ -30,6 +31,7 @@ tasks:
       - .github/zizmor.yaml
     silent: true
     cmds:
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: "[ -f .github/dependabot.yaml ]"
         cmd: zizmor --persona auditor --no-progress --format plain .github/dependabot.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
@@ -38,7 +40,7 @@ tasks:
     aliases:
       - actions
     desc: Analyse the GitHub Actions configuration with zizmor
-    summary: >-
+    summary: |-
       Run the static analysis tool `zizmor` against the GitHub Action configuration to identify any potential
       misconfiguration issues or security weaknesses within the workflows.
     sources:
@@ -46,6 +48,7 @@ tasks:
       - .github/zizmor.yaml
     silent: true
     cmds:
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: "[ -f action.yaml ]"
         cmd: zizmor --persona auditor --no-progress --format plain action.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'

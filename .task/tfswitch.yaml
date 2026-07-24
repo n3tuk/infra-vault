@@ -9,7 +9,7 @@ tasks:
       - t:s
       - switch
     desc: Synchronise the active version of Terraform installed
-    summary: >-
+    summary: |-
       Switch the active version of Terraform installed on the system to ensure that it matches the version constraint
       set by the `required_version` argument in the `terraform {}` block (found in `terraform.tf`). This does not need,
       nor interfere with, any system-installed version of Terraform using either any system package manager, or
@@ -18,7 +18,7 @@ tasks:
     silent: true
     run: once
     cmds:
-      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: mkdir -p '{{ default "../" .ROOT_DIR }}/.bin'
       - cmd: tfswitch --bin '{{ default "../" .ROOT_DIR }}/.bin/terraform' 2>&1 | ( grep -v 'PATH=' || true )
       - cmd: echo -e '\e[0;32mCompleted\e[0m'

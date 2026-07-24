@@ -13,8 +13,10 @@ tasks:
     run: once
     silent: true
     deps:
+      - task: utils:pre-check:exec:realpath
       - task: utils:pre-check:exec:tfswitch
       - task: utils:pre-check:exec:tflint
+      - task: utils:pre-check:exec:hcledit
       - task: utils:pre-check:exec:terraform-docs
       - task: utils:pre-check:exec:prettier
       - task: utils:pre-check:exec:yamllint

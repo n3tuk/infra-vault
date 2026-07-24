@@ -7,7 +7,7 @@ tasks:
   terraform:lint:init:
     internal: true
     desc: Initialize tflint for the Terraform configuration
-    summary: >-
+    summary: |-
       Initialize tflint for the Terraform configuration to ensure that all required plugins and dependencies are
       installed and up-to-date.
     sources:
@@ -20,7 +20,7 @@ tasks:
 
   terraform:lint:
     desc: Lint the Terraform configuration with tflint
-    summary: >-
+    summary: |-
       Lint the Terraform configuration with tflint to find any potential issues within the code, such as syntax errors,
       or potential misconfigurations.
     sources:
@@ -30,7 +30,22 @@ tasks:
       - task: terraform:lint:init
       - task: terraform:fmt
     silent: true
+    vars:
+      workspace:
+        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+      options:
+        sh: |-
+          if [[ -f "variables/{{ .workspace }}.tfvars" ]]; then
+            FILE=$(realpath --relative-to="{{ .ROOT_DIR }}" "variables/{{ .workspace }}.tfvars" 2>&1)
+            echo "\n  \e[1;37m--var-file=${FILE}\e[0m"
+          fi
+      arguments:
+        sh: |-
+          [[ -f 'variables/{{ .workspace }}.tfvars' ]] && echo -n '--var-file=variables/{{ .workspace }}.tfvars' || true
     cmds:
-      - defer: "{{if .EXIT_CODE}}echo -e '\e[1;31mFailed\e[0m'{{end}}"
-      - cmd: tflint --config '{{ .ROOT_DIR }}/.tflint.hcl'
+      - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
+      - cmd: "echo -e 'environment: \e[1;37m{{ .workspace }}\e[0m'"
+      - if: '{{ ne .options "" }}'
+        cmd: "echo -e 'options: {{ .options }}\n'"
+      - cmd: tflint --config '{{ .ROOT_DIR }}/.tflint.hcl' {{ .arguments }}
       - cmd: echo -e '\e[0;32mPassed\e[0m'
