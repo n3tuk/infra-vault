@@ -16,7 +16,6 @@ updates:
       # yamllint disable-line rule:quoted-strings
       time: "07:00"
       timezone: Europe/London
-    # Grouped updates shouldn't be needed as this configuration will only ever run against a single file
     cooldown:
       # Wait for three days before applying any update to allow time for any issues to be raised with the update, and
       # for any fixes to be applied, before applying the update to this repository.
@@ -33,14 +32,10 @@ updates:
       # yamllint disable-line rule:quoted-strings
       time: "08:00"
       timezone: Europe/London
-    groups:
-      github-actions:
-        applies-to: version-updates
-        group-by: dependency-name
     cooldown:
       default-days: 3
       exclude:
-        # Set a cooldown override for internal GitHub Actions and allow those to be updated immediately upon release
+        # Set a cool-down override for internal GitHub Actions and allow those to be updated immediately upon release
         - n3tuk/*
     commit-message:
       prefix: chore(actions)
@@ -54,10 +49,6 @@ updates:
       # yamllint disable-line rule:quoted-strings
       time: "08:30"
       timezone: Europe/London
-    groups:
-      terraform-updates:
-        applies-to: version-updates
-        group-by: dependency-name
     cooldown:
       default-days: 3
     commit-message:
