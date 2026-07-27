@@ -179,7 +179,11 @@ tasks:
       # accidentally overwrite another configuration's state files. Although the files are versioned, there remains a
       # risk of accidental destruction of infrastructure if the wrong state file is used. Additionally, ensure this is
       # passed through to the init.log file so that it can be captured in the CI/CD pipeline logs for auditing purposes.
-      - cmd: |-
+      #
+      # NOTE: This cmd cannot be run inside a GitHub Action workspace, as the repository is checked out to
+      #       the /github/workspace directory, and therefore breaks this check.
+      - if: '{{ ne .repository "workspace" }}'
+        cmd: |-
           TFSTATE_FILE=$(hcledit attribute get terraform.backend.gcs.prefix -f terraform.tf 2>/dev/null | tr -d \")
           if [[ "${TFSTATE_FILE}" == "github/n3tuk/{{ .repository }}" ]]; then
             echo 'Validated the backend prefix for GCS.'

@@ -27,7 +27,7 @@ Modules that operate on the `terraform/` directory set `dir: terraform` in their
 
 ## Task Naming
 
-- Use colon-separated namespaces: `<tool>:<action>` (e.g. `terraform:fmt`, `yaml:lint`, `zizmor:workflows`).
+- Use colon-separated namespaces: `<tool>:<action>` (e.g. `terraform:fmt`, `yamllint`, `zizmor:workflows`).
 - Internal subtasks use deeper nesting: `utils:pre-check:exec:*`.
 - Provide `aliases` for commonly-used tasks (short forms like `t:f`, `t:v`).
 - Use `desc` for a one-line description and `summary` for multi-line detail on every non-internal task.

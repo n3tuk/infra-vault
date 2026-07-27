@@ -7,6 +7,10 @@
 *.tfstate.backup
 *.tfplan
 
+# Ignore any temporary files for credentials
+.vault-ca-*.pem
+gha-creds-*.json
+
 # Ignore cache files for Prettier linting and formatting checks
 .prettiercache
 
