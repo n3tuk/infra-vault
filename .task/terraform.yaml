@@ -21,7 +21,7 @@ tasks:
       - task: terraform:switch
     vars:
       tfvars:
-        sh: find variables/ -type f -name '*.tfvars' -print 2>/dev/null | paste -sd' ' - || true
+        sh: find 'variables/' -type f -name '*.tfvars' -print 2>/dev/null | paste -sd' ' - || true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: "{{ .ROOT_DIR }}/.bin/terraform fmt -no-color"
@@ -62,7 +62,7 @@ tasks:
     run: once
     vars:
       workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+        sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
     cmds:
       - cmd: |-
           case '{{ .workspace }}' in
@@ -77,8 +77,8 @@ tasks:
           esac
       - cmd: |-
           echo -e 'Workspace "{{ .workspace }}" is active.'
-          if [[ -f "variables/{{ .workspace }}.tfvars" ]]; then
-            FILE=$(realpath --relative-to="{{ .ROOT_DIR }}" "variables/{{ .workspace }}.tfvars")
+          if [[ -f 'variables/{{ .workspace }}.tfvars' ]]; then
+            FILE=$(realpath --relative-to='{{ .ROOT_DIR }}' 'variables/{{ .workspace }}.tfvars')
             echo -e "Additional arguments provided:\n  -var-file=${FILE}"
           fi
 
@@ -110,10 +110,10 @@ tasks:
       # default value, even if the workspace has been set to a non-default value.
       workspace:
         sh: |-
-          if [[ -n "{{ .workspace }}" ]]; then
-            echo -n "{{ .workspace }}"
+          if [[ -n '{{ .workspace }}' ]]; then
+            echo -n '{{ .workspace }}'
           else
-            cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+            cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
           fi
     cmds:
       - cmd: |-
@@ -129,14 +129,16 @@ tasks:
           esac
       - cmd: echo -e 'Terraform workspace {{ .target }} selected'
       # If we're switching workspaces, ensure that any Terraform execution plan is removed, as it will be invalid
-      - cmd: rm -f terraform.tfplan
+      - cmd: rm -f 'terraform.tfplan'
       # If .terraform exists, then we can assume that we can just select the workspace to change to it, otherwise we
       # need to initialise Terraform first, which will also select the workspace as part of the initialisation.
-      - if: test -d .terraform
+      - if: test -d '.terraform' -a -f '.terraform/backend'
         cmd: "{{ .ROOT_DIR }}/.bin/terraform workspace select -or-create=true -no-color '{{ .target }}'"
-      - if: test -d .terraform
+      - if: test -d '.terraform' -a ! -f '.terraform/backend'
+        cmd: echo -n '{{ .target }}' > '.terraform/environment'
+      - if: test -d '.terraform'
         cmd: echo -e '\e[0;32mCompleted\e[0m'
-      - if: test ! -d .terraform
+      - if: test ! -d '.terraform'
         task: terraform:init
         vars:
           # Set the workspace name directly for the terraform:init to ensure that we initilise and select the target
@@ -160,7 +162,7 @@ tasks:
       - task: terraform:switch
     vars:
       workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+        sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
       repository:
         sh: basename '{{ .ROOT_DIR }}'
       arguments:
@@ -174,7 +176,7 @@ tasks:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - defer: echo -n '{{ default "0" .EXIT_CODE }}' > '.terraform/init'
       # Ensure the .terraform directory exists as tee will fail if it cannot create the init.log file
-      - cmd: mkdir -p .terraform
+      - cmd: mkdir -p '.terraform'
       # Perform a sanity check on the backend prefix to ensure this maps to the name of the repository, otherwise we may
       # accidentally overwrite another configuration's state files. Although the files are versioned, there remains a
       # risk of accidental destruction of infrastructure if the wrong state file is used. Additionally, ensure this is
@@ -185,7 +187,7 @@ tasks:
       - if: '{{ ne .repository "workspace" }}'
         cmd: |-
           TFSTATE_FILE=$(hcledit attribute get terraform.backend.gcs.prefix -f terraform.tf 2>/dev/null | tr -d \")
-          if [[ "${TFSTATE_FILE}" == "github/n3tuk/{{ .repository }}" ]]; then
+          if [[ "${TFSTATE_FILE}" == 'github/n3tuk/{{ .repository }}' ]]; then
             echo 'Validated the backend prefix for GCS.'
           else
             (
@@ -200,11 +202,20 @@ tasks:
             exit 1
           fi
       # If we're re-initialising ensure that any Terraform execution plan is removed as it may be invalid
-      - cmd: rm -f terraform.tfplan
+      - cmd: rm -f 'terraform.tfplan'
       - cmd: "{{ .ROOT_DIR }}/.bin/terraform init -upgrade -no-color{{ .arguments }} |& tee '.terraform/init.log'"
-      - cmd: >-
+      # This cmd cannot be run unless the backend has been initialised with the configuration as it is not possible to
+      # select a workspace when using any remote backend without it first being set up. If it hasn't been initialised,
+      # override by setting the workspace directly. This shouldn't adversely affect Terraform as the backend hasn't been
+      # configured so it won't attempt to plan not apply.
+      - if: test "${TF_BACKEND:-false}" == "true"
+        cmd: >-
           {{ .ROOT_DIR }}/.bin/terraform workspace select -or-create=true -no-color '{{ .workspace }}' |& tee -a
           '.terraform/init.log'
+      - if: test "${TF_BACKEND:-false}" == "true"
+        cmd: touch '.terraform/backend'
+      - if: test "${TF_BACKEND:-false}" != "true"
+        cmd: echo -n '{{ .workspace }}' > '.terraform/environment'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
   terraform:lock:
@@ -228,9 +239,11 @@ tasks:
       TF_INPUT: "false"
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - cmd: >-
-          {{ .ROOT_DIR }}/.bin/terraform providers lock -no-color -enable-plugin-cache -platform=linux_amd64
-          -platform=linux_arm64 -platform=darwin_arm64
+      - cmd: |-
+          {{ .ROOT_DIR }}/.bin/terraform providers lock -no-color -enable-plugin-cache \
+            -platform=linux_amd64 \
+            -platform=linux_arm64 \
+            -platform=darwin_arm64
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
   terraform:get:
@@ -253,7 +266,7 @@ tasks:
       - task: terraform:init
     vars:
       workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+        sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
       arguments:
         sh: |-
           [[ -f 'variables/{{ .workspace }}.tfvars' ]] && echo -n ' -var-file=variables/{{ .workspace }}.tfvars' || true
@@ -281,7 +294,7 @@ tasks:
       - task: terraform:get
     vars:
       workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+        sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
       arguments:
         sh: |-
           [[ -f 'variables/{{ .workspace }}.tfvars' ]] && echo -n ' -var-file=variables/{{ .workspace }}.tfvars' || true
@@ -313,7 +326,7 @@ tasks:
       - task: tflint
     vars:
       workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
+        sh: cat '.terraform/environment' 2>/dev/null || echo -n "{{ .default }}"
       arguments:
         sh: |-
           [[ -f 'variables/{{ .workspace }}.tfvars' ]] && echo -n ' -var-file=variables/{{ .workspace }}.tfvars' || true
@@ -323,6 +336,9 @@ tasks:
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - defer: echo -n '{{ default "0" .EXIT_CODE }}' > '.terraform/plan'
+      # Ensure the backend is initialised before attempting to craete the Terraform execution plan
+      - if: test ! -f '.terraform/backend'
+        cmd: echo -e 'The Terraform remote storage for the state file has not been initialised.' && exit 1
       - cmd: >-
           {{ .ROOT_DIR }}/.bin/terraform plan -no-color{{ .arguments }} -out=terraform.tfplan |& tee
           '.terraform/plan.log'
@@ -356,17 +372,18 @@ tasks:
         msg: >-
           The `TFPLAN_GPG_PASSPHRASE` environment variable is not set, so the `terraform.tfplan.gpg` file cannot be
           encrypted.
-      - sh: test ! -f terraform.tfplan.gpg
+      - sh: test ! -f 'terraform.tfplan.gpg'
         msg: The `terraform.tfplan` file has already been encrypted, so cannot be re-encrypted.
-      - sh: test -f terraform.tfplan
+      - sh: test -f 'terraform.tfplan'
         msg: The `terraform.tfplan` file does not exist, so cannot be encrypted.
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - defer: "{{if not .EXIT_CODE}}shred --force --remove --zero terraform.tfplan{{ end }}"
-      - defer: shred --force --remove --zero "{{ .pass }}"
-      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > "{{ .pass }}"
-      - cmd: >-
-          gpg --batch --yes --passphrase-file "{{ .pass }}" --output terraform.tfplan.gpg --symmetric terraform.tfplan
+      - defer: "{{ if not .EXIT_CODE }}shred --force --remove --zero terraform.tfplan{{ end }}"
+      - defer: shred --force --remove --zero '{{ .pass }}'
+      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > '{{ .pass }}'
+      - cmd: |-
+          gpg --batch --yes --passphrase-file '{{ .pass }}' \
+            --output 'terraform.tfplan.gpg' --symmetric 'terraform.tfplan'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
     generates:
       - terraform.tfplan.gpg
@@ -396,16 +413,18 @@ tasks:
         msg: >-
           The `TFPLAN_GPG_PASSPHRASE` environment variable is not set, so the `terraform.tfplan.gpg` file cannot be
           decrypted.
-      - sh: test ! -f terraform.tfplan
+      - sh: test ! -f 'terraform.tfplan'
         msg: The `terraform.tfplan` file has already been decrypted, so cannot be re-decrypted.
-      - sh: test -f terraform.tfplan.gpg
+      - sh: test -f 'terraform.tfplan.gpg'
         msg: The `terraform.tfplan.gpg` file does not exist, so cannot be decrypted.
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - defer: "{{if not .EXIT_CODE}}shred --force --remove --zero terraform.tfplan.gpg{{ end }}"
-      - defer: shred --force --remove --zero "{{ .file }}"
-      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > "{{ .file }}"
-      - cmd: gpg --batch --yes --passphrase-file "{{ .file }}" --output terraform.tfplan --decrypt terraform.tfplan.gpg
+      - defer: "{{ if not .EXIT_CODE }}shred --force --remove --zero terraform.tfplan.gpg{{ end }}"
+      - defer: shred --force --remove --zero '{{ .file }}'
+      - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > '{{ .file }}'
+      - cmd: |-
+          gpg --batch --yes --passphrase-file '{{ .file }}' \
+            --output 'terraform.tfplan' --decrypt 'terraform.tfplan.gpg'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
     generates:
       - terraform.tfplan
@@ -435,7 +454,7 @@ tasks:
       - defer: echo -n '{{ default "0" .EXIT_CODE }}' > '.terraform/apply'
       # The terraform.tfplan file is rendered obsolete by even a partial apply of the configuration, so it must always
       # be deleted when an apply is run, otherwise the next run will fail with an error.
-      - defer: rm -f terraform.tfplan
+      - defer: rm -f 'terraform.tfplan'
       - cmd: "{{ .ROOT_DIR }}/.bin/terraform apply -no-color terraform.tfplan |& tee '.terraform/apply.log'"
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
@@ -446,15 +465,14 @@ tasks:
     silent: true
     deps:
       - task: terraform:init
-    vars:
-      workspace:
-        sh: cat .terraform/environment 2>/dev/null || echo -n "{{ .default }}"
     env:
       TF_IN_AUTOMATION: "true"
       TF_INPUT: "false"
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - cmd: "echo -e 'workspace: \e[1;37m{{ .workspace }}\e[0m'"
+      # Ensure the backend is initialised before attempting to craete the Terraform execution plan
+      - if: test ! -f '.terraform/backend'
+        cmd: echo -e 'The Terraform remote storage for the state file has not been initialised.' && exit 1
       - cmd: "{{ .ROOT_DIR }}/.bin/terraform output -no-color"
 
   terraform:documentation:
@@ -488,7 +506,7 @@ tasks:
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - cmd: rm -f terraform.tfplan
-      - cmd: rm -f terraform.tfstate terraform.tfstate.backup
-      - cmd: rm -rf .terraform
+      - cmd: rm -f 'terraform.tfplan'
+      - cmd: rm -f 'terraform.tfstate' 'terraform.tfstate.backup'
+      - cmd: rm -rf '.terraform'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
