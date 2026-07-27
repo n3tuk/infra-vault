@@ -29,7 +29,7 @@ repos:
         name: Check for hard-coded secrets, keys, and credentials
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform.git
-    rev: v1.108.0
+    rev: v1.108.1
     hooks:
       - id: terraform_fmt
         name: Check Terraform configuration formatting
