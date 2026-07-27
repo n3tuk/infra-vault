@@ -4,7 +4,7 @@
 version: 3
 
 tasks:
-  yaml:lint:
+  yamllint:
     internal: false
     desc: Run yamllint for all YAML files
     summary: |-

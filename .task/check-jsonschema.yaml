@@ -4,26 +4,28 @@
 version: 3
 
 tasks:
-  schema:
+  check-jsonschema:
     desc: Validate the schema of YAML files in the repository
     summary: |-
       Validate the layout and content of the YAML files in this repository using the JSON Schema files, including:
-        Taskfiles (Taskfile.yaml, .taskfiles/*.yaml), then GitHub Dependabot configuration (.github/dependabot.yaml),
-        all GitHub Workflows (.github/workflows/*.yaml), the pre-commit Configuration (.pre-commit-config.yaml), and the
-        Mergify Configuration (.github/mergify.yml).
+
+      - Taskfiles (Taskfile.yaml, .taskfiles/*.yaml);
+      - GitHub Dependabot configuration (.github/dependabot.yaml);
+      - GitHub Workflows (.github/workflows/*.yaml);
+      - pre-commit Configuration (.pre-commit-config.yaml); and
+      - Mergify Configuration (.github/mergify.yml).
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
-      - task: schema:taskfiles
-      - task: schema:dependabot
-      - task: schema:workflows
-      - task: schema:action
-      - task: schema:pre-commit
-      - task: schema:mergify
-      - cmd: |-
-          echo -e '\e[0;32mPassed\e[0m'
+      - task: check-jsonschema:taskfiles
+      - task: check-jsonschema:dependabot
+      - task: check-jsonschema:workflows
+      - task: check-jsonschema:action
+      - task: check-jsonschema:pre-commit
+      - task: check-jsonschema:mergify
+      - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:taskfiles:
+  check-jsonschema:taskfiles:
     desc: Validate the schema of all Taskfiles
     sources:
       - Taskfile.yaml
@@ -34,7 +36,7 @@ tasks:
       - cmd: check-jsonschema --output-format text --builtin-schema vendor.taskfile Taskfile.yaml .task/*.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:dependabot:
+  check-jsonschema:dependabot:
     desc: Validate the schema of the GitHub Dependabot configuration
     sources:
       - .github/dependabot.yaml
@@ -45,7 +47,7 @@ tasks:
         cmd: check-jsonschema --output-format text --builtin-schema vendor.dependabot .github/dependabot.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:workflows:
+  check-jsonschema:workflows:
     desc: Validate the schema of the GitHub Workflows
     sources:
       - .github/workflows/*.yaml
@@ -67,7 +69,7 @@ tasks:
         cmd: check-jsonschema --output-format text --builtin-schema vendor.github-workflows {{ .files }}
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:action:
+  check-jsonschema:action:
     desc: Validate the schema of the GitHub Action configuration
     sources:
       - action.yaml
@@ -78,7 +80,7 @@ tasks:
         cmd: check-jsonschema --output-format text --builtin-schema vendor.github-actions action.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:pre-commit:
+  check-jsonschema:pre-commit:
     desc: Validate the schema of the pre-commit configuration
     sources:
       - .pre-commit-config.yaml
@@ -91,7 +93,7 @@ tasks:
           .pre-commit-config.yaml
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
-  schema:mergify:
+  check-jsonschema:mergify:
     desc: Validate the schema of the Mergify configuration
     sources:
       - .github/mergify.yml

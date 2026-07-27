@@ -2,8 +2,9 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 
 version: 3
+
 output: prefixed
-interval: 2s
+interval: 3s
 
 vars:
   default: production
@@ -59,10 +60,10 @@ includes:
 
 tasks:
   default:
-    desc: Run the linting, validation, and testing tasks once
+    desc: Run the linting, formatting, validation, analysis, and documentation tasks
     summary: |-
-      Run the linting, validation, and testing tasks for all Terraform configurations and associated files, but only
-      once, not continuously. Use the following command for additional information on the steps involved:
+      Run the linting, formatting, validation, analysis, and documentation tasks for all Terraform configurations and
+      associated files. Use the following command for additional information on the steps involved:
 
         $ task --summary develop
     silent: true
@@ -75,6 +76,9 @@ tasks:
       - dev
     desc: Run the linting, formatting, validation, analysis, and documentation tasks
     summary: |-
+      Run the linting, formatting, validation, analysis, and documentation tasks for all Terraform configurations and
+      associated files.
+
       The `develop` task is designed to run the core integration steps for this repository (and can do so continuously
       when using the `--watch` option). It is designed to be run during development to ensure that any changes made to
       the code are valid, correctly formatted, and do not introduce any security issues or misconfigurations.
@@ -120,9 +124,9 @@ tasks:
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - task: terraform:lint
-      - task: yaml:lint
-      - task: markdown:lint
+      - task: tflint
+      - task: yamllint
+      - task: markdownlint
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
   validate:
@@ -133,9 +137,9 @@ tasks:
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
-      - task: schema
-      - task: terraform:lock
+      - task: check-jsonschema
       - task: terraform:validate
+      - task: terraform:lock
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
   analyse:
@@ -149,9 +153,7 @@ tasks:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - task: snyk
       - task: actionlint
-      - task: zizmor:dependabot
-      - task: zizmor:workflows
-      - task: zizmor:actions
+      - task: zizmor
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
 
   documentation:

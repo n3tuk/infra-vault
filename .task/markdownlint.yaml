@@ -4,7 +4,7 @@
 version: 3
 
 tasks:
-  markdown:lint:
+  markdownlint:
     internal: false
     desc: Run markdownlint for all Markdown files
     summary: |-
