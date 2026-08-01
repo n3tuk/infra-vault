@@ -13,6 +13,8 @@ tasks:
       - terraform/*.tf
       - terraform/*.tfvars
     silent: true
+    deps:
+      - task: utils:pre-check:exec:snyk
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: echo "Snyk is not yet configured; skipping."

@@ -60,6 +60,8 @@ tasks:
       - {{ .workspaces | join "\n- " }}
     silent: true
     run: once
+    deps:
+      - task: utils:pre-check:exec:realpath
     vars:
       workspace:
         sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
@@ -158,8 +160,8 @@ tasks:
     silent: true
     run: when_changed
     deps:
-      - task: terraform:workspace
       - task: terraform:switch
+      - task: terraform:workspace
     vars:
       workspace:
         sh: cat '.terraform/environment' 2>/dev/null || echo -n '{{ .default }}'
@@ -489,6 +491,8 @@ tasks:
       - "{{ .ROOT_DIR }}/.terraform-docs.yaml"
       - "*.tf"
     silent: true
+    deps:
+      - task: utils:pre-check:exec:terraform-docs
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: terraform-docs . --config '{{ .ROOT_DIR }}/.terraform-docs.yaml'

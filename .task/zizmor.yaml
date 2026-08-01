@@ -27,6 +27,8 @@ tasks:
       - .github/workflows/*.yaml
       - .github/zizmor.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:zizmor
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: ls .github/workflows/*.yaml >/dev/null 2>&1
@@ -44,6 +46,8 @@ tasks:
       - .github/dependabot.yaml
       - .github/zizmor.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:zizmor
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: "[ -f .github/dependabot.yaml ]"
@@ -61,6 +65,8 @@ tasks:
       - action.yaml
       - .github/zizmor.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:zizmor
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: "[ -f action.yaml ]"

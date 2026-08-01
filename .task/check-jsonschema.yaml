@@ -31,6 +31,9 @@ tasks:
       - Taskfile.yaml
       - .task/*.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - cmd: check-jsonschema --output-format text --builtin-schema vendor.taskfile Taskfile.yaml .task/*.yaml
@@ -41,6 +44,9 @@ tasks:
     sources:
       - .github/dependabot.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: "[ -f .github/dependabot.yaml ]"
@@ -63,6 +69,9 @@ tasks:
             | paste -sd' ' - \
           || true
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: '{{ ne .files "" }}'
@@ -74,6 +83,9 @@ tasks:
     sources:
       - action.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: test -f action.yaml
@@ -85,6 +97,9 @@ tasks:
     sources:
       - .pre-commit-config.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: "[ -f .pre-commit-config.yaml ]"
@@ -98,6 +113,9 @@ tasks:
     sources:
       - .github/mergify.yml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:check-jsonschema
+      - task: yamllint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: "[ -f .github/mergify.yml ]"

@@ -14,6 +14,8 @@ tasks:
       - "{{ .ROOT_DIR }}/.tflint.hcl"
     silent: true
     run: when_changed
+    deps:
+      - task: utils:pre-check:exec:tflint
     cmds:
       - cmd: tflint --config '{{ .ROOT_DIR }}/.tflint.hcl' --init
       - cmd: echo -e '\e[0;32mCompleted\e[0m'

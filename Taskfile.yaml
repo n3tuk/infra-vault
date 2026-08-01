@@ -87,7 +87,6 @@ tasks:
       analysis tools, and keep the documentation up-to-date, where it is automated.
     deps:
       - task: utils:pre-commit
-      - task: utils:pre-checks
     silent: true
     watch: true
     cmds:
