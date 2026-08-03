@@ -1,5 +1,6 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/release-drafter/release-drafter/master/schema.json
+
 # yamllint disable rule:line-length
 # yamllint disable rule:quoted-strings
 

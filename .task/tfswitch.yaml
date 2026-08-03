@@ -17,6 +17,8 @@ tasks:
       That version will be used exclusively by this repository.
     silent: true
     run: once
+    deps:
+      - task: utils:pre-check:exec:tfswitch
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - cmd: mkdir -p '{{ default "../" .ROOT_DIR }}/.bin'

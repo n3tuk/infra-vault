@@ -45,26 +45,26 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [authentik_application.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/application) | resource |
-| [authentik_group.admin](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
-| [authentik_group.secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
-| [authentik_group.secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
-| [authentik_policy_binding.admin](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
-| [authentik_policy_binding.secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
-| [authentik_policy_binding.secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_group.administrator](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_group.all_secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_group.all_secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/group) | resource |
+| [authentik_policy_binding.administrator](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_policy_binding.all_secrets_reader](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
+| [authentik_policy_binding.all_secrets_writer](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/policy_binding) | resource |
 | [authentik_property_mapping_provider_scope.openbao_groups](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/property_mapping_provider_scope) | resource |
 | [authentik_provider_oauth2.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/provider_oauth2) | resource |
 | [github_actions_organization_oidc_subject_claim_customization_template.organization](https://registry.terraform.io/providers/integrations/github/6.13.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
-| [vault_identity_group.admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
-| [vault_identity_group.secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
-| [vault_identity_group.secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
-| [vault_identity_group_alias.authentik_admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
-| [vault_identity_group_alias.authentik_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
-| [vault_identity_group_alias.authentik_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_identity_group.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group.all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group.all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
+| [vault_identity_group_alias.authentik_administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_identity_group_alias.authentik_all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
+| [vault_identity_group_alias.authentik_all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group_alias) | resource |
 | [vault_jwt_auth_backend.authentik](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend) | resource |
 | [vault_jwt_auth_backend.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend) | resource |
-| [vault_jwt_auth_backend_role.authentik_admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
-| [vault_jwt_auth_backend_role.authentik_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
-| [vault_jwt_auth_backend_role.authentik_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.authentik_administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.authentik_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.authentik_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_kv_secret_backend_v2.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
@@ -73,11 +73,11 @@ No modules.
 | [vault_mount.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
-| [vault_policy.admin](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
-| [vault_policy.secrets_read](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
-| [vault_policy.secrets_write](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [authentik_certificate_key_pair.default_self_signed](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/certificate_key_pair) | data source |
 | [authentik_flow.default_authentication_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
 | [authentik_flow.default_authorization_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |

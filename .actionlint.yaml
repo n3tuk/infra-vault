@@ -2,6 +2,15 @@
 self-hosted-runner:
   labels: []
 
-config-variables: []
+config-variables:
+  - N3TUK_ROOT_CA_CERTIFICATES
+  - GCP_PROJECT_ID
+  - GCP_WORKLOAD_IDENTITY_PROVIDER
+  - GCP_SERVICE_ACCOUNT_EMAIL
+  - AWS_REGION
+  - AWS_ROLE
+  - AUTHENTIK_URL
+  - VAULT_URL
+  - VAULT_ROLE
 
 paths: {}

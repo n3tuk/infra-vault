@@ -1,0 +1,60 @@
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+
+name: Terraform Plan & Apply
+run-name: >-
+  `terraform ${{ case(
+     github.event_name == 'workflow_dispatch', github.event.inputs.action,
+     github.event.pull_request.draft == false, 'apply',
+     'plan'
+   ) }}` for ${{ github.event.pull_request.title || github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: The action to perform when running Terraform (one of `plan` or `apply`).
+        type: choice
+        required: true
+        default: plan
+        options:
+          - plan
+          - apply
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  # The backend is disabled for validation, so allow concurrency between all commits, but only one per commit.
+  group: ${{ github.repository }}:terraform:${{ github.sha }}
+  cancel-in-progress: true
+
+# No permissions by default
+permissions: {}
+
+jobs:
+  apply:
+    name: Terraform
+    uses: n3tuk/workflows-terraform/.github/workflows/apply.yaml@23436fde48e635edb734a3332cc81fdb1ffcfad6 # v0.1.2
+    permissions:
+      id-token: write # allow the workflow to create a token for authentication
+      contents: read # check out repository
+      issues: write # submit or change comment on a Pull Request
+      pull-requests: write # make changes to the Pull Request
+    secrets:
+      AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_AUDIENCE: ${{ secrets.TS_AUDIENCE }}
+      APP_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_ID }}
+      APP_INSTALLATION_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_INSTALLATION_ID }}
+      APP_PEM_FILE: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_PEM_FILE }}
+    with:
+      configuration: terraform
+      environment: production
+      ca-certificates: ${{ vars.N3TUK_ROOT_CA_CERTIFICATES }}
+      authentik-url: ${{ vars.AUTHENTIK_URL }}
+      vault-url: ${{ vars.VAULT_URL }}
+      vault-role: ${{ vars.VAULT_ROLE }}
+      gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      gcp-workload-identity-provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      gcp-service-account-email: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}

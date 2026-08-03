@@ -4,7 +4,7 @@
 version: 3
 
 tasks:
-  markdown:lint:
+  markdownlint:
     internal: false
     desc: Run markdownlint for all Markdown files
     summary: |-
@@ -37,6 +37,9 @@ tasks:
               | paste -sd' ' - \
           ) || true
     silent: true
+    deps:
+      - task: utils:pre-check:exec:markdownlint
+      - task: prettier
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{end}}"
       - if: '{{ ne .files "" }}'

@@ -4,7 +4,7 @@
 version: 3
 
 tasks:
-  yaml:lint:
+  yamllint:
     internal: false
     desc: Run yamllint for all YAML files
     summary: |-
@@ -40,6 +40,7 @@ tasks:
               | paste -sd' ' - \
           ) || true
     deps:
+      - task: utils:pre-check:exec:yamllint
       - task: prettier
     silent: true
     cmds:

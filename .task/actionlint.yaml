@@ -12,6 +12,8 @@ tasks:
     sources:
       - .github/workflows/*.yaml
     silent: true
+    deps:
+      - task: utils:pre-check:exec:actionlint
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - if: ls .github/workflows/*.yaml >/dev/null 2>&1
