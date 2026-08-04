@@ -306,7 +306,7 @@ tasks:
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
       - defer: echo -n '{{ default "0" .EXIT_CODE }}' > '.terraform/validate'
-      - cmd: "{{ .ROOT_DIR }}/.bin/terraform validate -no-color{{ .arguments }}"
+      - cmd: "{{ .ROOT_DIR }}/.bin/terraform validate -no-color{{ .arguments }} |& tee '.terraform/validate.log'"
       - cmd: echo -e '\e[0;32mPassed\e[0m'
 
   terraform:plan:
@@ -384,8 +384,8 @@ tasks:
       - defer: shred --force --remove --zero '{{ .pass }}'
       - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > '{{ .pass }}'
       - cmd: |-
-          gpg --batch --yes --passphrase-file '{{ .pass }}' --cipher-algo AES256 \
-            --output 'terraform.tfplan.gpg' --symmetric 'terraform.tfplan'
+          gpg --pinentry-mode loopback --batch --yes --symmetric --cipher-algo AES256 \
+            --passphrase-file '{{ .pass }}' --output 'terraform.tfplan.gpg' 'terraform.tfplan'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
     generates:
       - terraform.tfplan.gpg
@@ -425,8 +425,8 @@ tasks:
       - defer: shred --force --remove --zero '{{ .file }}'
       - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > '{{ .file }}'
       - cmd: |-
-          gpg --batch --yes --passphrase-file '{{ .file }}' \
-            --output 'terraform.tfplan' --decrypt 'terraform.tfplan.gpg'
+          gpg  --pinentry-mode loopback --batch --yes --decrypt \
+            --passphrase-file '{{ .pass }}' --output 'terraform.tfplan' 'terraform.tfplan.gpg'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
     generates:
       - terraform.tfplan
