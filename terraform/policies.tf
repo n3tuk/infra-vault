@@ -5,6 +5,7 @@ resource "vault_policy" "administrator" {
 
 resource "vault_policy" "all_secrets_writer" {
   name = "all-secrets-writer"
+
   policy = templatefile("${path.module}/templates/all-secrets-writer.hcl", {
     mounts = [
       {
@@ -25,6 +26,7 @@ resource "vault_policy" "all_secrets_writer" {
 
 resource "vault_policy" "all_secrets_reader" {
   name = "all-secrets-reader"
+
   policy = templatefile("${path.module}/templates/all-secrets-reader.hcl", {
     mounts = [
       {

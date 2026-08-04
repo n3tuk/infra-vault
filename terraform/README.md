@@ -65,6 +65,7 @@ No modules.
 | [vault_jwt_auth_backend_role.authentik_administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.authentik_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.authentik_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_jwt_auth_backend_role.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_kv_secret_backend_v2.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
@@ -76,6 +77,7 @@ No modules.
 | [vault_policy.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [authentik_certificate_key_pair.default_self_signed](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/certificate_key_pair) | data source |

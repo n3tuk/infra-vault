@@ -384,7 +384,7 @@ tasks:
       - defer: shred --force --remove --zero '{{ .pass }}'
       - cmd: echo "${TFPLAN_GPG_PASSPHRASE}" > '{{ .pass }}'
       - cmd: |-
-          gpg --batch --yes --passphrase-file '{{ .pass }}' \
+          gpg --batch --yes --passphrase-file '{{ .pass }}' --cipher-algo AES256 \
             --output 'terraform.tfplan.gpg' --symmetric 'terraform.tfplan'
       - cmd: echo -e '\e[0;32mCompleted\e[0m'
     generates:
