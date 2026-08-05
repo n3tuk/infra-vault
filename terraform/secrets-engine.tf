@@ -2,7 +2,7 @@ resource "vault_mount" "github_actions" {
   path = "github-actions"
   type = "kv"
 
-  description = "Secrets for the GitHub Actions workflows as part of the n3t.uk Lab Environment."
+  description = "Secrets for the GitHub Actions workflows as part of the n3t.uk Lab Environment and Organization."
 
   options = {
     version = "2"

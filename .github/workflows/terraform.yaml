@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
 
-name: Terraform Plan & Apply
+name: Terraform
 run-name: >-
   `terraform ${{ case(
      github.event_name == 'workflow_dispatch', github.event.inputs.action,
@@ -25,17 +25,16 @@ on:
       - main
 
 concurrency:
-  # The backend is disabled for validation, so allow concurrency between all commits, but only one per commit.
-  group: ${{ github.repository }}:terraform:${{ github.sha }}
-  cancel-in-progress: true
+  group: ${{ github.repository }}:terraform
+  cancel-in-progress: false
 
 # No permissions by default
 permissions: {}
 
 jobs:
-  apply:
-    name: Terraform
-    uses: n3tuk/workflows-terraform/.github/workflows/apply.yaml@23436fde48e635edb734a3332cc81fdb1ffcfad6 # v0.1.2
+  plan:
+    name: Configuration
+    uses: n3tuk/workflows-terraform/.github/workflows/plan.yaml@f6ce689510e329e109d1734484da7f2bc8b515a5 # v0.2.2
     permissions:
       id-token: write # allow the workflow to create a token for authentication
       contents: read # check out repository
@@ -48,9 +47,46 @@ jobs:
       APP_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_ID }}
       APP_INSTALLATION_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_INSTALLATION_ID }}
       APP_PEM_FILE: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_PEM_FILE }}
+      TF_PLAN_PASSPHRASE: ${{ secrets.TF_PLAN_PASSPHRASE }}
     with:
       configuration: terraform
       environment: production
+
+      ca-certificates: ${{ vars.N3TUK_ROOT_CA_CERTIFICATES }}
+      authentik-url: ${{ vars.AUTHENTIK_URL }}
+      vault-url: ${{ vars.VAULT_URL }}
+      vault-role: ${{ vars.VAULT_ROLE }}
+      gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      gcp-workload-identity-provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      gcp-service-account-email: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+  apply:
+    name: Configuration
+    if: |-
+      github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply' ||
+      github.event.pull_request.draft == false
+    uses: n3tuk/workflows-terraform/.github/workflows/apply.yaml@f6ce689510e329e109d1734484da7f2bc8b515a5 # v0.2.2
+    needs:
+      - plan
+    permissions:
+      id-token: write # allow the workflow to create a token for authentication
+      contents: read # check out repository
+      issues: write # submit or change comment on a Pull Request
+      pull-requests: write # make changes to the Pull Request
+    secrets:
+      AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_AUDIENCE: ${{ secrets.TS_AUDIENCE }}
+      APP_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_ID }}
+      APP_INSTALLATION_ID: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_INSTALLATION_ID }}
+      APP_PEM_FILE: ${{ secrets.N3TUK_TERRAFORM_AGENT_APP_PEM_FILE }}
+      TF_PLAN_PASSPHRASE: ${{ secrets.TF_PLAN_PASSPHRASE }}
+    with:
+      configuration: terraform
+      environment: production
+      artifact-run-id: ${{ needs.plan.outputs.artifact-run-id }}
+      artifact-id: ${{ needs.plan.outputs.artifact-id }}
+
       ca-certificates: ${{ vars.N3TUK_ROOT_CA_CERTIFICATES }}
       authentik-url: ${{ vars.AUTHENTIK_URL }}
       vault-url: ${{ vars.VAULT_URL }}
