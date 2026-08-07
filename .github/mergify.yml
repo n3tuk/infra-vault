@@ -1,38 +1,30 @@
 ---
-# When working with Dependabot and GitHub Actions, where those Actions can make changes to documentation or code based
-# on updates to the repository's dependencies, it is always necessary for the pull requests to go through multiple
-# stagings using the force-ci-run label. These rules take this into account and allow those stages to be managed and
-# triggered as necessary.
+# yaml-language-server: $schema=https://docs.mergify.com/mergify-configuration-schema.json
+
+# Renovate pull requests are deliberately created as drafts. Once a maintainer promotes a pull request for review, these
+# rules ensure that only Renovate, or the n3t.uk terraform-docs bot, has changed the branch, and that they are
+# up-to-date, before Mergify approves and merges it.
+
+merge_protections_settings:
+  reporting_method: check-runs
+  auto_merge_conditions:
+    - author=renovate[bot]
+    - -draft
+    - -conflict
+    - -closed
 
 pull_request_rules:
-  # If the pull request was raised by Dependabot, and only Dependabot or the terraform-docs GitHub Application have make
-  # changes to the branch, then automatically approve if it's not in conflict with the base branch, and not closed.
-  - name: Automatic approval for Dependabot pull requests
+  - name: Automatic approval for Renovate pull requests
     conditions:
-      - author=dependabot[bot]
+      - author=renovate[bot]
       - base=main
       - "#commits-behind=0"
+      - -draft
       - -conflict
       - -closed
       - or:
-          - commits[*].author==dependabot[bot]
+          - commits[*].author==renovate[bot]
           - commits[*].author==n3tuk-terraform-docs[bot]
     actions:
       review:
         type: APPROVE
-
-  # If the pull request was raised by Dependabot, it only has a linear history, it has been approved for merging into
-  # the main or master branches, and is neither in conflict with the main branch, fallen behind, nor the force-ci-run
-  # label is still present, then automatically merge this request.
-  - name: Automatic merge for Dependabot pull requests
-    conditions:
-      - author=dependabot[bot]
-      - base=main
-      - linear-history
-      - "#approved-reviews-by>=1"
-      - -label=force-ci-run
-      - -conflict
-      - -closed
-    actions:
-      merge:
-        method: rebase

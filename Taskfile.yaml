@@ -132,7 +132,7 @@ tasks:
     desc: Validate selected files within this repository
     summary: |-
       Run validation checks on all Terraform files, as well as selected YAML files, including GitHub Workflows, GitHub
-      Actions, the GitHub Dependabot configuration, Mergify, Taskfiles, and the pre-commit configuration.
+      Actions, Renovate, Mergify, Taskfiles, and the pre-commit configuration.
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
@@ -144,9 +144,9 @@ tasks:
   analyse:
     desc: Run static analysis checks for this repository
     summary: |-
-      Run static code analysis tools (i.e Snyk) against the Terraform configuration, as well zizmor and actionlint
-      against the GitHub Dependabot configuration, all GitHub Workflow files, and the GitHub Action configuration, to
-      identify any potential security issues and misconfigurations within the code.
+      Run static code analysis tools (i.e Snyk) against the Terraform configuration, as well as zizmor and actionlint
+      against all GitHub Workflow files, and the GitHub Action configuration, to identify any potential security issues
+      and misconfigurations within the code.
     silent: true
     cmds:
       - defer: "{{ if .EXIT_CODE }}echo -e '\e[1;31mFailed\e[0m'{{ end }}"
