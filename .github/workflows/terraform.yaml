@@ -65,14 +65,32 @@ jobs:
       gcp-workload-identity-provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
       gcp-service-account-email: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
 
+  documentation:
+    # If we're manually planning or applying the configuration via the workflow_dispatch event we don't need to generate
+    # and validate the documentation as we won't have a pull request to push it back to.
+    if: github.event_name != 'workflow_dispatch'
+    name: Documentation
+    # yamllint disable-line rule:line-length
+    uses: n3tuk/workflows-terraform/.github/workflows/documentation.yaml@f6ce689510e329e109d1734484da7f2bc8b515a5 # v0.2.2
+    permissions:
+      contents: write
+      pull-requests: read
+    secrets:
+      APP_CLIENT_ID: ${{ secrets.N3TUK_TERRAFORM_DOCS_APP_CLIENT_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.N3TUK_TERRAFORM_DOCS_APP_PEM_FILE }}
+    with:
+      configuration: terraform
+
   apply:
     name: Configuration
     if: |-
-      github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply' ||
-      github.event.pull_request.draft == false
+      ! cancelled() &&
+      ( github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply' ||
+        github.event.pull_request.draft == false )
     uses: n3tuk/workflows-terraform/.github/workflows/apply.yaml@f6ce689510e329e109d1734484da7f2bc8b515a5 # v0.2.2
     needs:
       - plan
+      - documentation
     permissions:
       id-token: write # allow the workflow to create a token for authentication
       contents: read # check out repository
