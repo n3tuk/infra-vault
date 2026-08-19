@@ -28,7 +28,7 @@ data "authentik_property_mapping_provider_scope" "profile" {
 
 resource "authentik_property_mapping_provider_scope" "openbao_groups" {
   name        = "custom OAuth Mapping: OpenBao Groups"
-  description = "Adds the names of the user's Authentik groups to the ID token issued to OpenBao."
+  description = "Adds the names of the user's OpenBao-specific Authentik groups to the JWT issued to OpenBao for authorisation."
 
   scope_name = "openbao-groups"
   expression = "return {\"openbao-groups\": [group.name for group in user.ak_groups.all() if group.name.startswith('openbao-')]}"
