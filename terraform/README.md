@@ -54,6 +54,9 @@ No modules.
 | [authentik_property_mapping_provider_scope.openbao_groups](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/property_mapping_provider_scope) | resource |
 | [authentik_provider_oauth2.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/provider_oauth2) | resource |
 | [github_actions_organization_oidc_subject_claim_customization_template.organization](https://registry.terraform.io/providers/integrations/github/6.13.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
+| [vault_approle_auth_backend_role.raft_snapshotter](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role) | resource |
+| [vault_approle_auth_backend_role_secret_id.raft_snapshotter](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role_secret_id) | resource |
+| [vault_auth_backend.approle](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/auth_backend) | resource |
 | [vault_identity_group.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
 | [vault_identity_group.all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
 | [vault_identity_group.all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
@@ -80,6 +83,7 @@ No modules.
 | [vault_policy.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.raft_snapshotter](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [authentik_certificate_key_pair.default_self_signed](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/certificate_key_pair) | data source |
 | [authentik_flow.default_authentication_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
 | [authentik_flow.default_authorization_flow](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/data-sources/flow) | data source |
@@ -99,6 +103,9 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_app_raft_snapshotter_role_id"></a> [app\_raft\_snapshotter\_role\_id](#output\_app\_raft\_snapshotter\_role\_id) | The Role ID for the raft-snapshotter AppRole. |
+| <a name="output_app_raft_snapshotter_secret_id"></a> [app\_raft\_snapshotter\_secret\_id](#output\_app\_raft\_snapshotter\_secret\_id) | The Secret ID for the raft-snapshotter AppRole. |
+| <a name="output_apps_auth_path"></a> [apps\_auth\_path](#output\_apps\_auth\_path) | The mount path of the AppRole authentication backend used by services. |
 | <a name="output_authentik_application_slug"></a> [authentik\_application\_slug](#output\_authentik\_application\_slug) | The slug of the Authentik application created for OpenBao, used to construct the OIDC discovery URL. |
 | <a name="output_authentik_auth_accessor"></a> [authentik\_auth\_accessor](#output\_authentik\_auth\_accessor) | The accessor for the Authentik OIDC authentication backend used to authenticate users. |
 | <a name="output_authentik_auth_path"></a> [authentik\_auth\_path](#output\_authentik\_auth\_path) | The mount path of the Authentik OIDC authentication backend used to authenticate users. |
