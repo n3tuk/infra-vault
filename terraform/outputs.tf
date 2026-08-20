@@ -32,3 +32,19 @@ output "authentik_application_slug" {
   description = "The slug of the Authentik application created for OpenBao, used to construct the OIDC discovery URL."
   value       = authentik_application.openbao.slug
 }
+
+output "apps_auth_path" {
+  description = "The mount path of the AppRole authentication backend used by services."
+  value       = vault_auth_backend.approle.path
+}
+
+output "app_raft_snapshotter_role_id" {
+  description = "The Role ID for the raft-snapshotter AppRole."
+  value       = vault_approle_auth_backend_role.raft_snapshotter.role_id
+}
+
+output "app_raft_snapshotter_secret_id" {
+  description = "The Secret ID for the raft-snapshotter AppRole."
+  value       = vault_approle_auth_backend_role_secret_id.raft_snapshotter.secret_id
+  sensitive   = true
+}

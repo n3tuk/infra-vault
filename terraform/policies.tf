@@ -44,3 +44,9 @@ resource "vault_policy" "all_secrets_reader" {
     ]
   })
 }
+
+resource "vault_policy" "raft_snapshotter" {
+  name = "raft-snapshotter"
+
+  policy = file("${path.module}/templates/raft-snapshotter.hcl")
+}
