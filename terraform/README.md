@@ -2,8 +2,8 @@
 
 This is the [Terraform][terraform] configuration for the management of the OpenBao service within the n3t.uk
 infrastructure. Specifically OpenBao will be providing the secrets management service, alongside integrations into both
-the [Authentik][authentik] OIDC service at [auth.n3t.uk][n3tuk-auth], and the [GitHub Actions OIDC][github-actions-oidc]
-for the purposes of authenticating both users and machine-to-machine access.
+the [Authentik][authentik] OIDC service at [accounts.services.n3t.uk][n3tuk-accounts], and the [GitHub Actions
+OIDC][github-actions-oidc] for the purposes of authenticating both users and machine-to-machine access.
 
 > [!TIP]
 >
@@ -12,7 +12,7 @@ for the purposes of authenticating both users and machine-to-machine access.
 
 [terraform]: https://www.terraform.io/
 [authentik]: https://goauthentik.io/
-[n3tuk-auth]: https://auth.n3t.uk/
+[n3tuk-accounts]: https://accounts.services.n3t.uk/
 [github-actions-oidc]: https://docs.github.com/en/actions/concepts/security/openid-connect
 [gh-pages]: https://pages.n3t.uk/infra-openbao
 
@@ -96,8 +96,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_authentik_url"></a> [authentik\_url](#input\_authentik\_url) | The base URL of the Authentik instance used to provide OIDC authentication for OpenBao users (e.g. `https://auth.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
-| <a name="input_openbao_url"></a> [openbao\_url](#input\_openbao\_url) | The base URL of the OpenBao instance used to provide the secrets management endpoint (e.g. `https://secrets.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
+| <a name="input_authentik_url"></a> [authentik\_url](#input\_authentik\_url) | The base URL of the Authentik instance used to provide OIDC authentication for OpenBao users (e.g. `https://accounts.services.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
+| <a name="input_openbao_url"></a> [openbao\_url](#input\_openbao\_url) | The base URL of the OpenBao instance used to provide the secrets management endpoint (e.g. `https://secrets.services.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration. | `string` | n/a | yes |
 
 ## Outputs
 

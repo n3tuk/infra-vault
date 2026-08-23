@@ -1,6 +1,6 @@
 variable "authentik_url" {
+  description = "The base URL of the Authentik instance used to provide OIDC authentication for OpenBao users (e.g. `https://accounts.services.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration."
   type        = string
-  description = "The base URL of the Authentik instance used to provide OIDC authentication for OpenBao users (e.g. `https://auth.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration."
 
   validation {
     condition     = can(regex("^https://", var.authentik_url))
@@ -9,8 +9,8 @@ variable "authentik_url" {
 }
 
 variable "openbao_url" {
+  description = "The base URL of the OpenBao instance used to provide the secrets management endpoint (e.g. `https://secrets.services.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration."
   type        = string
-  description = "The base URL of the OpenBao instance used to provide the secrets management endpoint (e.g. `https://secrets.n3t.uk`). This is environment-specific and so is not hard-coded into the configuration."
 
   validation {
     condition     = can(regex("^https://", var.openbao_url))
