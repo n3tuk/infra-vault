@@ -25,6 +25,28 @@ resource "vault_kv_secret_backend_v2" "github_actions" {
   cas_required = true
 }
 
+resource "vault_mount" "concourse" {
+  path = "concourse"
+  type = "kv"
+
+  description = "Secrets for Concourse CI pipelines as part of the n3t.uk Lab Environment."
+
+  options = {
+    version = "2"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "vault_kv_secret_backend_v2" "concourse" {
+  mount = vault_mount.concourse.path
+
+  max_versions = 10
+  cas_required = true
+}
+
 resource "vault_mount" "n3tuk" {
   path = "n3t.uk"
   type = "kv"

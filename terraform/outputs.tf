@@ -5,6 +5,7 @@ output "secrets_mount_path" {
     n3tuk          = vault_mount.n3tuk.path
     kub3uk         = vault_mount.kub3uk.path
     github_actions = vault_mount.github_actions.path
+    concourse      = vault_mount.concourse.path
   }
 }
 
@@ -46,5 +47,16 @@ output "app_raft_snapshotter_role_id" {
 output "app_raft_snapshotter_secret_id" {
   description = "The Secret ID for the raft-snapshotter AppRole."
   value       = vault_approle_auth_backend_role_secret_id.raft_snapshotter.secret_id
+  sensitive   = true
+}
+
+output "app_concourse_role_id" {
+  description = "The Role ID for the Concourse CI AppRole."
+  value       = vault_approle_auth_backend_role.concourse.role_id
+}
+
+output "app_concourse_secret_id" {
+  description = "The Secret ID for the Concourse CI AppRole."
+  value       = vault_approle_auth_backend_role_secret_id.concourse.secret_id
   sensitive   = true
 }

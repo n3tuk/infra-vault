@@ -54,7 +54,9 @@ No modules.
 | [authentik_property_mapping_provider_scope.openbao_groups](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/property_mapping_provider_scope) | resource |
 | [authentik_provider_oauth2.openbao](https://registry.terraform.io/providers/goauthentik/authentik/2026.5.0/docs/resources/provider_oauth2) | resource |
 | [github_actions_organization_oidc_subject_claim_customization_template.organization](https://registry.terraform.io/providers/integrations/github/6.13.0/docs/resources/actions_organization_oidc_subject_claim_customization_template) | resource |
+| [vault_approle_auth_backend_role.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role) | resource |
 | [vault_approle_auth_backend_role.raft_snapshotter](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role) | resource |
+| [vault_approle_auth_backend_role_secret_id.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role_secret_id) | resource |
 | [vault_approle_auth_backend_role_secret_id.raft_snapshotter](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/approle_auth_backend_role_secret_id) | resource |
 | [vault_auth_backend.approle](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/auth_backend) | resource |
 | [vault_identity_group.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/identity_group) | resource |
@@ -71,15 +73,18 @@ No modules.
 | [vault_jwt_auth_backend_role.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_kv_secret_backend_v2.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
+| [vault_mount.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_policy.administrator](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.all_secrets_reader](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.all_secrets_writer](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
+| [vault_policy.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
 | [vault_policy.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/policy) | resource |
@@ -103,6 +108,8 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_app_concourse_role_id"></a> [app\_concourse\_role\_id](#output\_app\_concourse\_role\_id) | The Role ID for the Concourse CI AppRole. |
+| <a name="output_app_concourse_secret_id"></a> [app\_concourse\_secret\_id](#output\_app\_concourse\_secret\_id) | The Secret ID for the Concourse CI AppRole. |
 | <a name="output_app_raft_snapshotter_role_id"></a> [app\_raft\_snapshotter\_role\_id](#output\_app\_raft\_snapshotter\_role\_id) | The Role ID for the raft-snapshotter AppRole. |
 | <a name="output_app_raft_snapshotter_secret_id"></a> [app\_raft\_snapshotter\_secret\_id](#output\_app\_raft\_snapshotter\_secret\_id) | The Secret ID for the raft-snapshotter AppRole. |
 | <a name="output_apps_auth_path"></a> [apps\_auth\_path](#output\_apps\_auth\_path) | The mount path of the AppRole authentication backend used by services. |
