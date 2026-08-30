@@ -13,6 +13,10 @@ resource "vault_policy" "all_secrets_writer" {
         path    = vault_mount.github_actions.path
       },
       {
+        comment = "Concourse CI Secrets Engine"
+        path    = vault_mount.concourse.path
+      },
+      {
         comment = "kub3.uk Secrets Engine"
         path    = vault_mount.kub3uk.path
       },
@@ -34,6 +38,10 @@ resource "vault_policy" "all_secrets_reader" {
         path    = vault_mount.github_actions.path
       },
       {
+        comment = "Concourse CI Secrets Engine"
+        path    = vault_mount.concourse.path
+      },
+      {
         comment = "kub3.uk Secrets Engine"
         path    = vault_mount.kub3uk.path
       },
@@ -49,4 +57,10 @@ resource "vault_policy" "raft_snapshotter" {
   name = "raft-snapshotter"
 
   policy = file("${path.module}/templates/raft-snapshotter.hcl")
+}
+
+resource "vault_policy" "concourse" {
+  name = "concourse"
+
+  policy = file("${path.module}/templates/concourse.hcl")
 }
