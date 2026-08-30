@@ -42,7 +42,7 @@ creation and management.
 There are three methods of authentication to be supported:
 
 - The `root` token to be backed up and used for emergency access only.
-- The Authentik service at <https://auth.n3t.uk>, using OIDC, to provide user authentication for selected users to
+- The Authentik service at <https://accounts.services.n3t.uk>, using OIDC, to provide user authentication for selected users to
   manage and rotated selected secrets.
 - The GitHub Actions OIDC service to enable temporary authentication using JWT tokens issues by GitHub for access from
   CI/CD for both reading and managing secrets and resources.
