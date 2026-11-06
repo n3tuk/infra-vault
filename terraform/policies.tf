@@ -17,6 +17,10 @@ resource "vault_policy" "all_secrets_writer" {
         path    = vault_mount.concourse.path
       },
       {
+        comment = "Ansible Infrastructure Secrets"
+        path    = vault_mount.ansible.path
+      },
+      {
         comment = "kub3.uk Secrets Engine"
         path    = vault_mount.kub3uk.path
       },
@@ -40,6 +44,10 @@ resource "vault_policy" "all_secrets_reader" {
       {
         comment = "Concourse CI Secrets Engine"
         path    = vault_mount.concourse.path
+      },
+      {
+        comment = "Ansible Infrastructure Secrets"
+        path    = vault_mount.ansible.path
       },
       {
         comment = "kub3.uk Secrets Engine"

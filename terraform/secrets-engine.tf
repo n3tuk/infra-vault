@@ -47,6 +47,28 @@ resource "vault_kv_secret_backend_v2" "concourse" {
   cas_required = true
 }
 
+resource "vault_mount" "ansible" {
+  path = "ansible"
+  type = "kv"
+
+  description = "Secrets for Ansible playbooks and roles."
+
+  options = {
+    version = "2"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "vault_kv_secret_backend_v2" "ansible" {
+  mount = vault_mount.ansible.path
+
+  max_versions = 10
+  cas_required = true
+}
+
 resource "vault_mount" "n3tuk" {
   path = "n3t.uk"
   type = "kv"

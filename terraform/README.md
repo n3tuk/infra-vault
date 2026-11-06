@@ -73,10 +73,12 @@ No modules.
 | [vault_jwt_auth_backend_role.infra](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_github](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
 | [vault_jwt_auth_backend_role.infra_vault](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/jwt_auth_backend_role) | resource |
+| [vault_kv_secret_backend_v2.ansible](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
 | [vault_kv_secret_backend_v2.n3tuk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/kv_secret_backend_v2) | resource |
+| [vault_mount.ansible](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.concourse](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.github_actions](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |
 | [vault_mount.kub3uk](https://registry.terraform.io/providers/hashicorp/vault/5.10.1/docs/resources/mount) | resource |

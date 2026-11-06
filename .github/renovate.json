@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Europe/London",
-  "enabledManagers": ["pre-commit", "github-actions", "terraform", "tflint-plugins"],
+  "enabledManagers": ["pre-commit", "github-actions", "terraform"],
   "pre-commit": {
     "enabled": true
   },
